@@ -391,6 +391,12 @@ static BOOL isAuthenticationShowed = FALSE;
 %end
 
 %hook AWEPlayInteractionAuthorView
+%new - (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd"; 
+    return [dateFormatter stringFromDate:date];
+}
 - (NSString *)emojiForCountryCode:(NSString *)countryCode {
     if ([BHIManager uploadRegion]) {
         NSDictionary *selectedRegion = [BHIManager selectedRegion];
@@ -409,12 +415,6 @@ static BOOL isAuthenticationShowed = FALSE;
         }
     }
     return %orig;
-}
-%new - (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd"; 
-    return [dateFormatter stringFromDate:date];
 }
 %end
 
