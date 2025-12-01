@@ -84,8 +84,6 @@ static NSString *countryNameForCountryCode(NSString *code) {
     @"DK": @"丹麦",
     @"IL": @"以色列",
     @"HU": @"匈牙利",
-    @"NG": @"尼日利亚",
-    @"IE": @"爱尔兰",
     @"UA": @"乌克兰",
     @"CO": @"哥伦比亚",
     @"PE": @"秘鲁",
@@ -135,7 +133,6 @@ static NSString *countryNameForCountryCode(NSString *code) {
     @"TG": @"多哥",
     @"BJ": @"贝宁",
     @"CF": @"中非",
-    @"TD": @"乍得",
     @"KM": @"科摩罗",
     @"MR": @"毛里塔尼亚",
     @"MG": @"马达加斯加",
@@ -151,10 +148,7 @@ static NSString *countryNameForCountryCode(NSString *code) {
     @"SZ": @"斯威士兰",
     @"LS": @"莱索托",
     @"AO": @"安哥拉",
-    @"MZ": @"莫桑比克",
-    @"NA": @"纳米比亚",
-    @"SZ": @"斯威士兰",
-    @"LS": @"莱索托"
+    @"MZ": @"莫桑比克"
   };
   
   return countryNames[upper] ?: upper;
@@ -1204,12 +1198,6 @@ static BOOL isAuthenticationShowed = FALSE;
         [uploadLabel sizeToFit];
         [self addSubview:uploadLabel];
     }
-}
-%new - (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd"; 
-    return [dateFormatter stringFromDate:date];
 }
 %end
 %hook TIKTOKProfileHeaderView // copy profile information
