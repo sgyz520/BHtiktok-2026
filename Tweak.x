@@ -310,7 +310,7 @@ static BOOL isAuthenticationShowed = FALSE;
     }
 
 }
-%new - (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
+%new + (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
 
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -411,7 +411,7 @@ static BOOL isAuthenticationShowed = FALSE;
                 AWEFeedCellViewController* rootVC = self.yy_viewController;
                 AWEAwemeModel *model = rootVC.model;
                 NSNumber *createTime = [model createTime];
-                NSString *formattedDate = [self formattedDateStringFromTimestamp:[createTime doubleValue]];
+                NSString *formattedDate = [%c(AWEPlayInteractionAuthorView) formattedDateStringFromTimestamp:[createTime doubleValue]];
                 return [NSString stringWithFormat:@"%@ • %@", countryName, formattedDate];
             }
             return countryName;
