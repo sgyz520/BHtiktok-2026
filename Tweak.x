@@ -308,7 +308,7 @@ static BOOL isAuthenticationShowed = FALSE;
     } else {
         return [NSString stringWithFormat:@"%ld", (long)number];
     }
-
+}
 %end
 
 %hook TTKProfileRootView
