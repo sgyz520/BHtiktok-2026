@@ -309,15 +309,6 @@ static BOOL isAuthenticationShowed = FALSE;
         return [NSString stringWithFormat:@"%ld", (long)number];
     }
 
-}
-%new + (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
-
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd"; 
-    return [dateFormatter stringFromDate:date];
-
-}
 %end
 
 %hook TTKProfileRootView
@@ -411,7 +402,7 @@ static BOOL isAuthenticationShowed = FALSE;
                 AWEFeedCellViewController* rootVC = self.yy_viewController;
                 AWEAwemeModel *model = rootVC.model;
                 NSNumber *createTime = [model createTime];
-                NSString *formattedDate = [%c(AWEPlayInteractionAuthorView) formattedDateStringFromTimestamp:[createTime doubleValue]];
+                NSString *formattedDate = [self formattedDateStringFromTimestamp:[createTime doubleValue]];
                 return [NSString stringWithFormat:@"%@ • %@", countryName, formattedDate];
             }
             return countryName;
