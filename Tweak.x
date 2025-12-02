@@ -409,6 +409,34 @@ static NSString *formattedDateStringFromTimestamp(NSTimeInterval timestamp) {
 - (void)layoutSubviews {
     %orig;
     
+    // 处理国家名称显示
+    if ([BHIManager uploadRegion]) {
+        // 调整UIStackView的位置
+        for (int i = 0; i < [[self subviews] count]; i++) {
+            id j = [[self subviews] objectAtIndex:i];
+            if ([j isKindOfClass:%c(UIStackView)]) {
+                CGRect frame = [j frame];
+                frame.origin.x = 39.5; 
+                [j setFrame:frame];
+            } else {
+                [[self viewWithTag:666] removeFromSuperview];
+            }
+        }
+        
+        // 添加国家标签
+        [[self viewWithTag:666] removeFromSuperview];
+        AWEFeedCellViewController* rootVC = self.yy_viewController;
+        AWEAwemeModel *model = rootVC.model;
+        NSString *countryID = model.region;
+        UILabel *uploadLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 2, 39.5, 20.5)];
+        NSString *countryName = countryNameForCountryCode(countryID);
+        uploadLabel.text = [NSString stringWithFormat:@"%@ •", countryName];
+        uploadLabel.tag = 666;
+        [uploadLabel setTextColor: [UIColor whiteColor]];
+        [uploadLabel sizeToFit];
+        [self addSubview:uploadLabel];
+    }
+    
     // 如果启用了视频上传日期功能，则添加日期标签
     if ([BHIManager uploadRegion] && [BHIManager videoUploadDate]) {
         // 先移除可能已存在的日期标签
@@ -1186,34 +1214,6 @@ static NSString *formattedDateStringFromTimestamp(NSTimeInterval timestamp) {
     }
 
     return %orig;
-}
-%end
-%hook AWEPlayInteractionAuthorView
-- (void)layoutSubviews {
-    %orig;
-    if ([BHIManager uploadRegion]){
-        for (int i = 0; i < [[self subviews] count]; i ++){
-            id j = [[self subviews] objectAtIndex:i];
-            if ([j isKindOfClass:%c(UIStackView)]){
-                CGRect frame = [j frame];
-                frame.origin.x = 39.5; 
-                [j setFrame:frame];
-            }else {
-                [[self viewWithTag:666] removeFromSuperview];
-            }
-        }
-        [[self viewWithTag:666] removeFromSuperview];
-        AWEFeedCellViewController* rootVC = self.yy_viewController;
-        AWEAwemeModel *model = rootVC.model;
-        NSString *countryID = model.region;
-        UILabel *uploadLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,2,39.5,20.5)];
-        NSString *countryName = countryNameForCountryCode(countryID);
-        uploadLabel.text = [NSString stringWithFormat:@"%@ •",countryName];
-        uploadLabel.tag = 666;
-        [uploadLabel setTextColor: [UIColor whiteColor]];
-        [uploadLabel sizeToFit];
-        [self addSubview:uploadLabel];
-    }
 }
 %end
 %hook TIKTOKProfileHeaderView // copy profile information
