@@ -2,21 +2,7 @@
 
 static NSArray *jailbreakPaths;
 
-// Helper function to get top view controller
-UIViewController *topMostController() {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    
-    while (topController.presentedViewController) {
-        topController = topController.presentedViewController;
-    }
-    
-    return topController;
-}
-
-// Helper function to check if device is iPad
-BOOL is_iPad() {
-    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-}
+// Helper functions are already defined in TikTokHeaders.h
 
 static void showConfirmation(void (^okHandler)(void)) {
   [%c(AWEUIAlertView) showAlertWithTitle:@"BHTikTok, Hi" description:@"Are you sure?" image:nil actionButtonTitle:@"Yes" cancelButtonTitle:@"No" actionBlock:^{
