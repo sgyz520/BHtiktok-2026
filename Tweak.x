@@ -1201,6 +1201,13 @@ static BOOL isAuthenticationShowed = FALSE;
     return countryNames[uppercaseCountryCode] ?: uppercaseCountryCode;
 }
 
+%new - (NSString *)formattedDateStringFromTimestamp:(NSTimeInterval)timestamp {
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd"; 
+    return [dateFormatter stringFromDate:date];
+}
+
 - (void)layoutSubviews {
     %orig;
     if ([BHIManager uploadRegion]){
@@ -1219,21 +1226,27 @@ static BOOL isAuthenticationShowed = FALSE;
         AWEAwemeModel *model = rootVC.model;
         NSString *countryID = model.region;
         NSString *countryName = [self emojiForCountryCode:countryID];
-        NSString *fullText = [NSString stringWithFormat:@"%@ •",countryName];
+        
+        // 获取视频上传日期
+        NSNumber *createTime = [model createTime];
+        NSString *formattedDate = [self formattedDateStringFromTimestamp:[createTime doubleValue]];
+        
+        // 创建包含国家名称和日期的文本
+        NSString *fullText = [NSString stringWithFormat:@"%@ • %@", countryName, formattedDate];
         
         // 创建标签并设置文本
         UILabel *uploadLabel = [[UILabel alloc]init];
         uploadLabel.text = fullText;
         uploadLabel.tag = 666;
         [uploadLabel setTextColor: [UIColor whiteColor]];
-        [uploadLabel setFont:[UIFont systemFontOfSize:14.0]]; // 设置合适的字体大小
+        [uploadLabel setFont:[UIFont systemFontOfSize:16.0]]; // 设置合适的字体大小
         
         // 先设置文本，然后计算文本宽度
         [uploadLabel sizeToFit];
         CGFloat labelWidth = uploadLabel.frame.size.width;
         
         // 限制最大宽度，避免过长的国家名称占用太多空间
-        CGFloat maxWidth = 120.0; // 设置最大宽度
+        CGFloat maxWidth = 150.0; // 增加最大宽度以容纳日期
         if (labelWidth > maxWidth) {
             labelWidth = maxWidth;
         }
