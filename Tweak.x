@@ -70,6 +70,7 @@ static BOOL isAuthenticationShowed = FALSE;
 - (void)configWithModel:(id)arg1 isMine:(BOOL)arg2 { // Video like count & upload date lables
     %orig;
     if ([BHIManager videoLikeCount] || [BHIManager videoUploadDate]) {
+        // Remove existing views
         for (int i = 0; i < [[self.contentView subviews] count]; i ++) {
             UIView *j = [[self.contentView subviews] objectAtIndex:i];
             if (j.tag == 1001) {
@@ -111,47 +112,37 @@ static BOOL isAuthenticationShowed = FALSE;
         clockImage.tintColor = [UIColor whiteColor];
         [clockImage setTranslatesAutoresizingMaskIntoConstraints:false];
         
-
-        for (int i = 0; i < [[self.contentView subviews] count]; i ++) {
-            UIView *j = [[self.contentView subviews] objectAtIndex:i];
-            if (j.tag == 1001) {
-                [j removeFromSuperview];
-            } 
-            else if (j.tag == 1002) {
-                [j removeFromSuperview];
-            }
-        }
         if ([BHIManager videoLikeCount]) {
-        [self.contentView addSubview:heartImage];
-        [NSLayoutConstraint activateConstraints:@[
-                [heartImage.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:110],
-                [heartImage.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:4],
-                [heartImage.widthAnchor constraintEqualToConstant:16],
-                [heartImage.heightAnchor constraintEqualToConstant:16],
-            ]];
-        [self.contentView addSubview:likeCountLabel];
-        [NSLayoutConstraint activateConstraints:@[
-                [likeCountLabel.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:109],
-                [likeCountLabel.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:23],
-                [likeCountLabel.widthAnchor constraintEqualToConstant:200],
-                [likeCountLabel.heightAnchor constraintEqualToConstant:16],
-            ]];
+            [self.contentView addSubview:heartImage];
+            [NSLayoutConstraint activateConstraints:@[
+                    [heartImage.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:110],
+                    [heartImage.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:4],
+                    [heartImage.widthAnchor constraintEqualToConstant:16],
+                    [heartImage.heightAnchor constraintEqualToConstant:16],
+                ]];
+            [self.contentView addSubview:likeCountLabel];
+            [NSLayoutConstraint activateConstraints:@[
+                    [likeCountLabel.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:109],
+                    [likeCountLabel.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:23],
+                    [likeCountLabel.widthAnchor constraintEqualToConstant:200],
+                    [likeCountLabel.heightAnchor constraintEqualToConstant:16],
+                ]];
         }
         if ([BHIManager videoUploadDate]) {
-        [self.contentView addSubview:clockImage];
-        [NSLayoutConstraint activateConstraints:@[
-                [clockImage.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:128],
-                [clockImage.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:4],
-                [clockImage.widthAnchor constraintEqualToConstant:16],
-                [clockImage.heightAnchor constraintEqualToConstant:16],
-            ]];
-        [self.contentView addSubview:uploadDateLabel];
-        [NSLayoutConstraint activateConstraints:@[
-                [uploadDateLabel.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:127],
-                [uploadDateLabel.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:23],
-                [uploadDateLabel.widthAnchor constraintEqualToConstant:200],
-                [uploadDateLabel.heightAnchor constraintEqualToConstant:16],
-            ]];
+            [self.contentView addSubview:clockImage];
+            [NSLayoutConstraint activateConstraints:@[
+                    [clockImage.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:128],
+                    [clockImage.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:4],
+                    [clockImage.widthAnchor constraintEqualToConstant:16],
+                    [clockImage.heightAnchor constraintEqualToConstant:16],
+                ]];
+            [self.contentView addSubview:uploadDateLabel];
+            [NSLayoutConstraint activateConstraints:@[
+                    [uploadDateLabel.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:127],
+                    [uploadDateLabel.leadingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.leadingAnchor constant:23],
+                    [uploadDateLabel.widthAnchor constraintEqualToConstant:200],
+                    [uploadDateLabel.heightAnchor constraintEqualToConstant:16],
+                ]];
         }
     }
 }
