@@ -7,6 +7,8 @@
 + (BOOL)shareSheet;
 + (BOOL)removeWatermark;
 + (BOOL)hideElementButton;
++ (BOOL)elementsHiddenGlobal;
++ (void)setElementsHiddenGlobal:(BOOL)hidden;
 + (BOOL)uploadRegion;
 + (BOOL)autoPlay;
 + (BOOL)stopPlay;

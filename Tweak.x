@@ -1298,22 +1298,54 @@ static BOOL isAuthenticationShowed = FALSE;
 %property (nonatomic, retain) UIProgressView *progressView;
 - (void)configWithModel:(id)model {
     %orig;
-    self.elementsHidden = false;
+    // 应用全局隐藏状态
+    self.elementsHidden = [BHIManager elementsHiddenGlobal];
     if ([BHIManager downloadButton]){
         [self addDownloadButton];
     }
     if ([BHIManager hideElementButton]) {
         [self addHideElementButton];
+        // 如果全局状态是隐藏，则立即应用隐藏效果
+        if (self.elementsHidden) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                AWEAwemeBaseViewController *rootVC = self.viewController;
+                if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
+                    TTKFeedInteractionLegacyMainContainerElement *interactionController = rootVC.interactionController;
+                    [interactionController hideAllElements:true exceptArray:nil];
+                    // 更新按钮图标
+                    UIButton *hideButton = (UIButton *)[self viewWithTag:999];
+                    if (hideButton) {
+                        [hideButton setImage:[UIImage systemImageNamed:@"eye"] forState:UIControlStateNormal];
+                    }
+                }
+            });
+        }
     }
 }
 - (void)configureWithModel:(id)model {
     %orig;
-    self.elementsHidden = false;
+    // 应用全局隐藏状态
+    self.elementsHidden = [BHIManager elementsHiddenGlobal];
     if ([BHIManager downloadButton]){
         [self addDownloadButton];
     }
     if ([BHIManager hideElementButton]) {
         [self addHideElementButton];
+        // 如果全局状态是隐藏，则立即应用隐藏效果
+        if (self.elementsHidden) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                AWEAwemeBaseViewController *rootVC = self.viewController;
+                if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
+                    TTKFeedInteractionLegacyMainContainerElement *interactionController = rootVC.interactionController;
+                    [interactionController hideAllElements:true exceptArray:nil];
+                    // 更新按钮图标
+                    UIButton *hideButton = (UIButton *)[self viewWithTag:999];
+                    if (hideButton) {
+                        [hideButton setImage:[UIImage systemImageNamed:@"eye"] forState:UIControlStateNormal];
+                    }
+                }
+            });
+        }
     }
 }
 %new - (void)addDownloadButton {
@@ -1321,7 +1353,7 @@ static BOOL isAuthenticationShowed = FALSE;
     [downloadButton setTag:998];
     [downloadButton setTranslatesAutoresizingMaskIntoConstraints:false];
     [downloadButton addTarget:self action:@selector(downloadButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    [downloadButton setImage:[UIImage systemImageNamed:@"arrow.down"] forState:UIControlStateNormal];
+    [downloadButton setImage:[UIImage systemImageNamed:@"arrow.down.circle.fill"] forState:UIControlStateNormal];
     if (![self viewWithTag:998]) {
         [downloadButton setTintColor:[UIColor whiteColor]];
         [self addSubview:downloadButton];
@@ -1631,14 +1663,22 @@ static BOOL isAuthenticationShowed = FALSE;
     AWEAwemeBaseViewController *rootVC = self.viewController;
     if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
         TTKFeedInteractionLegacyMainContainerElement *interactionController = rootVC.interactionController;
-        if (self.elementsHidden) {
-            self.elementsHidden = false;
-            [interactionController hideAllElements:false exceptArray:nil];
-            [sender setImage:[UIImage systemImageNamed:@"eye.slash"] forState:UIControlStateNormal];
-        } else {
+        
+        // 切换全局隐藏状态
+        BOOL currentGlobalState = [BHIManager elementsHiddenGlobal];
+        [BHIManager setElementsHiddenGlobal:!currentGlobalState];
+        
+        // 应用到当前视频
+        if (!currentGlobalState) {
+            // 当前未隐藏，设置为隐藏
             self.elementsHidden = true;
             [interactionController hideAllElements:true exceptArray:nil];
             [sender setImage:[UIImage systemImageNamed:@"eye"] forState:UIControlStateNormal];
+        } else {
+            // 当前已隐藏，设置为显示
+            self.elementsHidden = false;
+            [interactionController hideAllElements:false exceptArray:nil];
+            [sender setImage:[UIImage systemImageNamed:@"eye.slash"] forState:UIControlStateNormal];
         }
     }
 }
@@ -1804,50 +1844,8 @@ static BOOL isAuthenticationShowed = FALSE;
 %new - (void) downloadButtonHandler:(UIButton *)sender {
     AWEAwemeBaseViewController *rootVC = self.viewController;
     if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
-
-     UIAction *action1 = [UIAction actionWithTitle:@"Download Video"
-                                            image:[UIImage systemImageNamed:@"film"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self downloadVideo:rootVC];
-    }];
-    UIAction *action0 = [UIAction actionWithTitle:@"Download HD Video"
-                                            image:[UIImage systemImageNamed:@"film"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self downloadHDVideo:rootVC];
-    }];
-    UIAction *action2 = [UIAction actionWithTitle:@"Download Music"
-                                            image:[UIImage systemImageNamed:@"music.note"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self downloadMusic:rootVC];
-    }];
-    UIAction *action3 = [UIAction actionWithTitle:@"Copy Music link"
-                                            image:[UIImage systemImageNamed:@"link"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self copyMusic:rootVC];
-    }];
-    UIAction *action4 = [UIAction actionWithTitle:@"Copy Video link"
-                                            image:[UIImage systemImageNamed:@"link"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self copyVideo:rootVC];
-    }];
-    UIAction *action5 = [UIAction actionWithTitle:@"Copy Decription"
-                                            image:[UIImage systemImageNamed:@"note.text"]
-                                       identifier:nil
-                                          handler:^(__kindof UIAction * _Nonnull action) {
-                                            [self copyDecription:rootVC];
-    }];
-    UIMenu *downloadMenu = [UIMenu menuWithTitle:@"Downloads Menu"
-                                        children:@[action1, action0,action2]];
-    UIMenu *copyMenu = [UIMenu menuWithTitle:@"Copy Menu"
-                                        children:@[action3, action4, action5]];
-    UIMenu *mainMenu = [UIMenu menuWithTitle:@"" children:@[downloadMenu, copyMenu]];
-    [sender setMenu:mainMenu];
-    sender.showsMenuAsPrimaryAction = YES;
+        // 直接下载高清视频，不再显示二级菜单
+        [self downloadHDVideo:rootVC];
     }
 }
 %new - (void)addHideElementButton {
