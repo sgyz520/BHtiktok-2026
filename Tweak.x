@@ -1488,9 +1488,7 @@ static BOOL isAuthenticationShowed = FALSE;
     } else {
         [%c(AWEUIAlertView) showAlertWithTitle:@"BHTikTok, Hi" description:@"The video dosen't have music to download." image:nil actionButtonTitle:@"OK" cancelButtonTitle:nil actionBlock:nil cancelBlock:nil];
     }
-}
-
-    } else if ([self.viewController isKindOfClass:%c(TTKPhotoAlbumDetailCellController)]) {
+} else if ([self.viewController isKindOfClass:%c(TTKPhotoAlbumDetailCellController)]) {
         TTKPhotoAlbumDetailCellController *rootVC = self.viewController;
         AWEPlayPhotoAlbumViewController *photoAlbumController = [rootVC valueForKey:@"_photoAlbumController"];
         NSArray <AWEPhotoAlbumPhoto *> *photos = rootVC.model.photoAlbum.photos;
@@ -2048,7 +2046,6 @@ static BOOL isAuthenticationShowed = FALSE;
 	return (id (^)(id)) ^{
 	};
 }
-%end
 %end
 
 
