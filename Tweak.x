@@ -989,6 +989,9 @@ static BOOL isAuthenticationShowed = FALSE;
     NSDictionary *countryNames = @{
         // 亚洲
         @"CN": @"中国",
+        @"TW": @"台湾",
+        @"HK": @"香港",
+        @"MO": @"澳门",
         @"JP": @"日本",
         @"KR": @"韩国",
         @"KP": @"朝鲜",
@@ -1127,7 +1130,7 @@ static BOOL isAuthenticationShowed = FALSE;
         @"LY": @"利比亚",
         @"SD": @"苏丹",
         @"ET": @"埃塞俄比亚",
-        @"MO": @"摩洛哥",
+        @"MA": @"摩洛哥",
         @"MW": @"马拉维",
         @"ZM": @"赞比亚",
         @"ZW": @"津巴布韦",
@@ -1216,13 +1219,40 @@ static BOOL isAuthenticationShowed = FALSE;
         AWEFeedCellViewController* rootVC = self.yy_viewController;
         AWEAwemeModel *model = rootVC.model;
         NSString *countryID = model.region;
-        UILabel *uploadLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,2,60,20.5)];
         NSString *countryName = [self emojiForCountryCode:countryID];
-        uploadLabel.text = [NSString stringWithFormat:@"%@ •",countryName];
+        NSString *fullText = [NSString stringWithFormat:@"%@ •",countryName];
+        
+        // 创建标签并设置文本
+        UILabel *uploadLabel = [[UILabel alloc]init];
+        uploadLabel.text = fullText;
         uploadLabel.tag = 666;
         [uploadLabel setTextColor: [UIColor whiteColor]];
-        [uploadLabel setFont:[UIFont systemFontOfSize:12.0]]; // 设置合适的字体大小
+        [uploadLabel setFont:[UIFont systemFontOfSize:14.0]]; // 设置合适的字体大小
+        
+        // 先设置文本，然后计算文本宽度
         [uploadLabel sizeToFit];
+        CGFloat labelWidth = uploadLabel.frame.size.width;
+        
+        // 限制最大宽度，避免过长的国家名称占用太多空间
+        CGFloat maxWidth = 120.0; // 设置最大宽度
+        if (labelWidth > maxWidth) {
+            labelWidth = maxWidth;
+        }
+        
+        // 设置最终框架
+        uploadLabel.frame = CGRectMake(0, 2, labelWidth, 20.5);
+        
+        // 调整UIStackView的位置，为更长的国家名称腾出空间
+        for (int i = 0; i < [[self subviews] count]; i ++){
+            id j = [[self subviews] objectAtIndex:i];
+            if ([j isKindOfClass:%c(UIStackView)]){
+                CGRect frame = [j frame];
+                // 根据国家标签的宽度动态调整UIStackView的位置
+                frame.origin.x = labelWidth + 5.0; // 添加5像素的间距
+                [j setFrame:frame];
+            }
+        }
+        
         [self addSubview:uploadLabel];
     }
 }
