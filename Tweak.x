@@ -1365,10 +1365,10 @@ static BOOL isAuthenticationShowed = FALSE;
     [self addSubview:downloadButton];
 
     [NSLayoutConstraint activateConstraints:@[
-        [downloadButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:90],
-        [downloadButton.trailingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.trailingAnchor constant:-10],
-        [downloadButton.widthAnchor constraintEqualToConstant:40],
-        [downloadButton.heightAnchor constraintEqualToConstant:40],
+        [downloadButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:50],
+        [downloadButton.trailingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.trailingAnchor constant:-50],
+        [downloadButton.widthAnchor constraintEqualToConstant:35],
+        [downloadButton.heightAnchor constraintEqualToConstant:35],
     ]];
 }
 %new - (void)downloadHDVideo:(AWEAwemeBaseViewController *)rootVC {
