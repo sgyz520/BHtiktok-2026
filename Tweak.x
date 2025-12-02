@@ -1363,8 +1363,8 @@ static BOOL isAuthenticationShowed = FALSE;
         [NSLayoutConstraint activateConstraints:@[
             [downloadButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:90],
             [downloadButton.trailingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.trailingAnchor constant:-10],
-            [downloadButton.widthAnchor constraintEqualToConstant:30],
-            [downloadButton.heightAnchor constraintEqualToConstant:30],
+            [downloadButton.widthAnchor constraintEqualToConstant:40],
+            [downloadButton.heightAnchor constraintEqualToConstant:40],
         ]];
     }
 }
@@ -1718,7 +1718,7 @@ static BOOL isAuthenticationShowed = FALSE;
     [downloadButton setTag:998];
     [downloadButton setTranslatesAutoresizingMaskIntoConstraints:false];
     [downloadButton addTarget:self action:@selector(downloadButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    [downloadButton setImage:[UIImage systemImageNamed:@"arrow.down"] forState:UIControlStateNormal];
+    [downloadButton setImage:[UIImage systemImageNamed:@"arrow.down.circle.fill"] forState:UIControlStateNormal];
     if (![self viewWithTag:998]) {
         [downloadButton setTintColor:[UIColor whiteColor]];
         [self addSubview:downloadButton];
@@ -1726,8 +1726,8 @@ static BOOL isAuthenticationShowed = FALSE;
         [NSLayoutConstraint activateConstraints:@[
             [downloadButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:90],
             [downloadButton.trailingAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.trailingAnchor constant:-10],
-            [downloadButton.widthAnchor constraintEqualToConstant:30],
-            [downloadButton.heightAnchor constraintEqualToConstant:30],
+            [downloadButton.widthAnchor constraintEqualToConstant:40],
+            [downloadButton.heightAnchor constraintEqualToConstant:40],
         ]];
     }
 }
@@ -1800,8 +1800,58 @@ static BOOL isAuthenticationShowed = FALSE;
 %new - (void) downloadButtonHandler:(UIButton *)sender {
     AWEAwemeBaseViewController *rootVC = self.viewController;
     if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
-        // 直接下载高清视频，不再显示二级菜单
-        [self downloadHDVideo:rootVC];
+        // 创建下载菜单
+        UIAction *hdVideoAction = [UIAction actionWithTitle:@"Download HD Video"
+                                                       image:[UIImage systemImageNamed:@"video.fill"]
+                                                  identifier:nil
+                                                     handler:^(__kindof UIAction * _Nonnull action) {
+            [self downloadHDVideo:rootVC];
+        }];
+        
+        UIAction *sdVideoAction = [UIAction actionWithTitle:@"Download SD Video"
+                                                       image:[UIImage systemImageNamed:@"video.badge.plus"]
+                                                  identifier:nil
+                                                     handler:^(__kindof UIAction * _Nonnull action) {
+            [self downloadVideo:rootVC];
+        }];
+        
+        UIAction *musicAction = [UIAction actionWithTitle:@"Download Music"
+                                                    image:[UIImage systemImageNamed:@"music.note"]
+                                               identifier:nil
+                                                  handler:^(__kindof UIAction * _Nonnull action) {
+            [self downloadMusic:rootVC];
+        }];
+        
+        UIAction *copyVideoAction = [UIAction actionWithTitle:@"Copy Video Link"
+                                                        image:[UIImage systemImageNamed:@"link"]
+                                                   identifier:nil
+                                                      handler:^(__kindof UIAction * _Nonnull action) {
+            [self copyVideo:rootVC];
+        }];
+        
+        UIAction *copyMusicAction = [UIAction actionWithTitle:@"Copy Music Link"
+                                                        image:[UIImage systemImageNamed:@"link"]
+                                                   identifier:nil
+                                                      handler:^(__kindof UIAction * _Nonnull action) {
+            [self copyMusic:rootVC];
+        }];
+        
+        UIAction *copyDescAction = [UIAction actionWithTitle:@"Copy Description"
+                                                        image:[UIImage systemImageNamed:@"note.text"]
+                                                   identifier:nil
+                                                      handler:^(__kindof UIAction * _Nonnull action) {
+            [self copyDecription:rootVC];
+        }];
+        
+        UIMenu *downloadMenu = [UIMenu menuWithTitle:@"Download Options"
+                                             children:@[hdVideoAction, sdVideoAction, musicAction]];
+        UIMenu *copyMenu = [UIMenu menuWithTitle:@"Copy Options"
+                                        children:@[copyVideoAction, copyMusicAction, copyDescAction]];
+        UIMenu *mainMenu = [UIMenu menuWithTitle:@"" 
+                                         children:@[downloadMenu, copyMenu]];
+        
+        [sender setMenu:mainMenu];
+        sender.showsMenuAsPrimaryAction = YES;
     }
 }
 %new - (void)addHideElementButton {
