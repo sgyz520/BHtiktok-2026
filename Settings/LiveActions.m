@@ -1,7 +1,5 @@
 #import "LiveActions.h"
-
-// 声明自定义本地化函数
-NSString *BHTikTokLocalizedString(NSString *key, NSString *comment);
+#import "BHTikTokLocalization.h"
 
 @interface LiveActions () <UITableViewDelegate, UITableViewDataSource>
 

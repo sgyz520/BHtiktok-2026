@@ -1,9 +1,10 @@
 #import "TikTokHeaders.h"
+#import "BHTikTokLocalization.h"
 
 static NSArray *jailbreakPaths;
 
 // 自定义本地化加载函数
-static NSString *BHTikTokLocalizedString(NSString *key, NSString *comment) {
+NSString *BHTikTokLocalizedString(NSString *key, NSString *comment) {
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path = [bundle pathForResource:@"zh-Hans" ofType:@"lproj"];
     if (!path) {
