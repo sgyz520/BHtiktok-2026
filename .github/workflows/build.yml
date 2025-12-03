@@ -1,0 +1,83 @@
+name: 构建 BHTikTok++
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          brew update
+          brew install ldid dpkg gnu-sed
+
+      - name: Set up Theos
+        run: |
+          THEOS="$HOME/theos"
+          if [ ! -d "$THEOS/.git" ]; then
+            git clone --recursive https://github.com/theos/theos.git "$THEOS"
+          else
+            git -C "$THEOS" submodule update --init --recursive || true
+          fi
+          if [ -d "$THEOS/sdks/.git" ]; then
+            git -C "$THEOS/sdks" pull --ff-only
+          else
+            rm -rf "$THEOS/sdks"
+            git clone https://github.com/theos/sdks.git "$THEOS/sdks"
+          fi
+
+      - name: Export THEOS env
+        run: echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+
+      - name: Verify localization files
+        run: |
+          echo "检查本地化文件..."
+          if [ -d "zh-Hans.lproj" ]; then
+            echo "找到中文本地化文件夹"
+            ls -la zh-Hans.lproj/
+            if [ -f "zh-Hans.lproj/Localizable.strings" ]; then
+              echo "找到Localizable.strings文件"
+              # 检查文件格式是否正确
+              plutil -lint zh-Hans.lproj/Localizable.strings
+            else
+              echo "警告: 未找到Localizable.strings文件"
+              exit 1
+            fi
+          else
+            echo "警告: 未找到zh-Hans.lproj文件夹"
+            exit 1
+          fi
+
+      - name: Build package
+        run: |
+          make package
+
+      - name: Verify package includes localization
+        run: |
+          echo "检查生成的包是否包含本地化文件..."
+          if [ -d "packages" ]; then
+            ls -la packages/
+            # 解包检查内容
+            DEB_FILE=$(find packages -name "*.deb" | head -n 1)
+            if [ -n "$DEB_FILE" ]; then
+              echo "检查包文件: $DEB_FILE"
+              dpkg-deb -c "$DEB_FILE" | grep -i "zh-hans"
+              echo "包内容检查完成"
+            fi
+          fi
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bhtiktok-deb
+          path: packages/*.deb
