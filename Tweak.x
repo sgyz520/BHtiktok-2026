@@ -1506,7 +1506,7 @@ static BOOL isAuthenticationShowed = FALSE;
         unsigned long photosCount = [photos count];
         NSMutableArray <UIAction *> *photosActions = [NSMutableArray array];
         for (int i = 0; i < photosCount; i++) {
-            NSString *title = [NSString stringWithFormat:@"Download Photo %d", i+1];
+            NSString *title = [NSString stringWithFormat:BHTikTokLocalizedString(@"Download Photo %d", nil), i+1];
             UIAction *action = [UIAction actionWithTitle:title
                                                    image:[UIImage systemImageNamed:@"photo.fill"]
                                               identifier:nil
@@ -1529,29 +1529,29 @@ static BOOL isAuthenticationShowed = FALSE;
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self downloadMusic:rootVC];
         }];
-        UIAction *action3 = [UIAction actionWithTitle:@"Copy Music link"
+        UIAction *action3 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Music Link", nil)
                                                 image:[UIImage systemImageNamed:@"link"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyMusic:rootVC];
         }];
-        UIAction *action4 = [UIAction actionWithTitle:@"Copy Video link"
+        UIAction *action4 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Video Link", nil)
                                                 image:[UIImage systemImageNamed:@"link"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyVideo:rootVC];
         }];
-        UIAction *action5 = [UIAction actionWithTitle:@"Copy Decription"
+        UIAction *action5 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Description", nil)
                                                 image:[UIImage systemImageNamed:@"note.text"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyDecription:rootVC];
         }];
-        UIMenu *PhotosMenu = [UIMenu menuWithTitle:@"Download Photos Menu"
+        UIMenu *PhotosMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Download Photos Menu", nil)
                                           children:photosActions];
-        UIMenu *downloadMenu = [UIMenu menuWithTitle:@"Downloads Menu"
+        UIMenu *downloadMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Downloads Menu", nil)
                                             children:@[action2]];
-        UIMenu *copyMenu = [UIMenu menuWithTitle:@"Copy Menu"
+        UIMenu *copyMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Copy Menu", nil)
                                         children:@[action3, action4, action5]];
         UIMenu *mainMenu = [UIMenu menuWithTitle:@"" children:@[PhotosMenu, downloadMenu, copyMenu]];
         [sender setMenu:mainMenu];
@@ -1586,29 +1586,29 @@ static BOOL isAuthenticationShowed = FALSE;
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self downloadMusic:rootVC];
         }];
-        UIAction *action3 = [UIAction actionWithTitle:@"Copy Music link"
+        UIAction *action3 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Music Link", nil)
                                                 image:[UIImage systemImageNamed:@"link"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyMusic:rootVC];
         }];
-        UIAction *action4 = [UIAction actionWithTitle:@"Copy Video link"
+        UIAction *action4 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Video Link", nil)
                                                 image:[UIImage systemImageNamed:@"link"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyVideo:rootVC];
         }];
-        UIAction *action5 = [UIAction actionWithTitle:@"Copy Decription"
+        UIAction *action5 = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Description", nil)
                                                 image:[UIImage systemImageNamed:@"note.text"]
                                            identifier:nil
                                               handler:^(__kindof UIAction * _Nonnull action) {
             [self copyDecription:rootVC];
         }];
-        UIMenu *PhotosMenu = [UIMenu menuWithTitle:@"Download Photos Menu"
+        UIMenu *PhotosMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Download Photos Menu", nil)
                                           children:photosActions];
-        UIMenu *downloadMenu = [UIMenu menuWithTitle:@"Downloads Menu"
+        UIMenu *downloadMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Downloads Menu", nil)
                                             children:@[action2]];
-        UIMenu *copyMenu = [UIMenu menuWithTitle:@"Copy Menu"
+        UIMenu *copyMenu = [UIMenu menuWithTitle:BHTikTokLocalizedString(@"Copy Menu", nil)
                                         children:@[action3, action4, action5]];
         UIMenu *mainMenu = [UIMenu menuWithTitle:@"" children:@[PhotosMenu, downloadMenu, copyMenu]];
         [sender setMenu:mainMenu];
@@ -1617,42 +1617,42 @@ static BOOL isAuthenticationShowed = FALSE;
         // 处理普通视频的情况
         AWEAwemeBaseViewController *rootVC = (AWEAwemeBaseViewController *)self.viewController;
         
-        UIAction *hdAction = [UIAction actionWithTitle:@"Download HD Video"
+        UIAction *hdAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Download HD Video", nil)
                                                  image:[UIImage systemImageNamed:@"video.fill"]
                                             identifier:nil
                                                handler:^(__kindof UIAction * _Nonnull action) {
             [self downloadHDVideo:rootVC];
         }];
         
-        UIAction *sdAction = [UIAction actionWithTitle:@"Download SD Video"
+        UIAction *sdAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Download SD Video", nil)
                                                  image:[UIImage systemImageNamed:@"video.fill"]
                                             identifier:nil
                                                handler:^(__kindof UIAction * _Nonnull action) {
             [self downloadVideo:rootVC];
         }];
         
-        UIAction *musicAction = [UIAction actionWithTitle:@"Download Music"
+        UIAction *musicAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Download Music", nil)
                                                     image:[UIImage systemImageNamed:@"music.note"]
                                                identifier:nil
                                                   handler:^(__kindof UIAction * _Nonnull action) {
             [self downloadMusic:rootVC];
         }];
         
-        UIAction *copyMusicAction = [UIAction actionWithTitle:@"Copy Music link"
+        UIAction *copyMusicAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Music Link", nil)
                                                          image:[UIImage systemImageNamed:@"link"]
                                                     identifier:nil
                                                        handler:^(__kindof UIAction * _Nonnull action) {
             [self copyMusic:rootVC];
         }];
         
-        UIAction *copyVideoAction = [UIAction actionWithTitle:@"Copy Video link"
+        UIAction *copyVideoAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Video Link", nil)
                                                          image:[UIImage systemImageNamed:@"link"]
                                                     identifier:nil
                                                        handler:^(__kindof UIAction * _Nonnull action) {
             [self copyVideo:rootVC];
         }];
         
-        UIAction *copyDescAction = [UIAction actionWithTitle:@"Copy Description"
+        UIAction *copyDescAction = [UIAction actionWithTitle:BHTikTokLocalizedString(@"Copy Description", nil)
                                                         image:[UIImage systemImageNamed:@"note.text"]
                                                    identifier:nil
                                                       handler:^(__kindof UIAction * _Nonnull action) {

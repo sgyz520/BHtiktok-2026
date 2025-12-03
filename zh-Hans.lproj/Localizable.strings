@@ -121,6 +121,19 @@
 "Yes" = "是";
 "No" = "否";
 
+// Menu Titles
+"Downloads Menu" = "下载菜单";
+"Copy Menu" = "复制菜单";
+"Download Photos Menu" = "下载照片菜单";
+"Download HD Video" = "下载高清视频";
+"Download SD Video" = "下载标清视频";
+"Download Music" = "下载音乐";
+"Download Video with Music" = "下载带音乐的视频";
+"Copy Music Link" = "复制音乐链接";
+"Copy Video Link" = "复制视频链接";
+"Copy Description" = "复制描述";
+"Download Photo %d" = "下载照片 %d";
+
 // Profile Save
 "Save profile image" = "保存个人资料图片";
 "Do you want to save this image" = "您想要保存这张图片吗？";
