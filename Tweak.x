@@ -5,7 +5,7 @@ static NSArray *jailbreakPaths;
 // Helper functions are already defined in TikTokHeaders.h
 
 static void showConfirmation(void (^okHandler)(void)) {
-  [%c(AWEUIAlertView) showAlertWithTitle:@"BHTikTok, Hi" description:@"Are you sure?" image:nil actionButtonTitle:@"Yes" cancelButtonTitle:@"No" actionBlock:^{
+  [%c(AWEUIAlertView) showAlertWithTitle:NSLocalizedString(@"BHTikTok, Hi", nil) description:NSLocalizedString(@"Are you sure?", nil) image:nil actionButtonTitle:NSLocalizedString(@"Yes", nil) cancelButtonTitle:NSLocalizedString(@"No", nil) actionBlock:^{
     okHandler();
   } cancelBlock:nil];
 }
@@ -176,7 +176,7 @@ static BOOL isAuthenticationShowed = FALSE;
         NSNumber *userVideoCount = [user visibleVideosCount];
         if (userVideoCount){
             UILabel *userVideoCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,2,100,20.5)];
-            userVideoCountLabel.text = [NSString stringWithFormat:@"Video Count: %@", userVideoCount];
+            userVideoCountLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Video Count: %@", nil), userVideoCount];
             userVideoCountLabel.font = [UIFont systemFontOfSize:9.0];
             [self addSubview:userVideoCountLabel];
         }
@@ -198,7 +198,7 @@ static BOOL isAuthenticationShowed = FALSE;
 }
 %new - (void)handleLongPress:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        [%c(AWEUIAlertView) showAlertWithTitle:@"Save profile image" description:@"Do you want to save this image" image:nil actionButtonTitle:@"Yes" cancelButtonTitle:@"No" actionBlock:^{
+        [%c(AWEUIAlertView) showAlertWithTitle:NSLocalizedString(@"Save profile image", nil) description:NSLocalizedString(@"Do you want to save this image", nil) image:nil actionButtonTitle:NSLocalizedString(@"Yes", nil) cancelButtonTitle:NSLocalizedString(@"No", nil) actionBlock:^{
             UIImageWriteToSavedPhotosAlbum([self bd_baseImage], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
   } cancelBlock:nil];
     }
@@ -264,8 +264,8 @@ static BOOL isAuthenticationShowed = FALSE;
         TTKSettingsBaseCellPlugin *BHTikTokSettingsPluginCell = [[%c(TTKSettingsBaseCellPlugin) alloc] initWithPluginContext:self.context];
 
         AWESettingItemModel *BHTikTokSettingsItemModel = [[%c(AWESettingItemModel) alloc] initWithIdentifier:@"bhtiktok_settings"];
-        [BHTikTokSettingsItemModel setTitle:@"BHTikTok++ settings"];
-        [BHTikTokSettingsItemModel setDetail:@"BHTikTok++ settings"];
+        [BHTikTokSettingsItemModel setTitle:NSLocalizedString(@"BHTikTok++ settings", nil)];
+        [BHTikTokSettingsItemModel setDetail:NSLocalizedString(@"BHTikTok++ settings", nil)];
         [BHTikTokSettingsItemModel setIconImage:[UIImage systemImageNamed:@"gear"]];
         [BHTikTokSettingsItemModel setType:99];
 

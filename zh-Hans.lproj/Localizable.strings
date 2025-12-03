@@ -114,3 +114,16 @@
 // Country Table
 "Live Button Actions" = "直播按钮操作";
 "OK" = "确定";
+
+// Confirmation Dialogs
+"BHTikTok, Hi" = "BHTikTok, 你好";
+"Are you sure?" = "您确定吗？";
+"Yes" = "是";
+"No" = "否";
+
+// Profile Save
+"Save profile image" = "保存个人资料图片";
+"Do you want to save this image" = "您想要保存这张图片吗？";
+
+// Video Count
+"Video Count: %@" = "视频数量: %@";

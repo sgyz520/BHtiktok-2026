@@ -16,7 +16,10 @@ BHTikTok_RESOURCE_DIRS = zh-Hans.lproj
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-# 确保本地化文件被包含在包中
+# 确保本地化文件被包含在包中，并放在正确位置
 after-stage::
 	$(ECHO_NOTHING)mkdir -p "$(THEOS_STAGING_DIR)/Library/Application Support/BHTikTok"$(ECHO_END)
 	$(ECHO_NOTHING)cp -r zh-Hans.lproj "$(THEOS_STAGING_DIR)/Library/Application Support/BHTikTok/"$(ECHO_END)
+	# 将本地化文件复制到TikTok应用bundle中
+	$(ECHO_NOTHING)mkdir -p "$(THEOS_STAGING_DIR)/var/mobile/Containers/Data/Application/TikTok.app"$(ECHO_END)
+	$(ECHO_NOTHING)cp -r zh-Hans.lproj "$(THEOS_STAGING_DIR)/var/mobile/Containers/Data/Application/TikTok.app/"$(ECHO_END)
