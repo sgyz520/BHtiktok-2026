@@ -10,4 +10,13 @@ BHTikTok_FILES = Tweak.x $(wildcard *.m JGProgressHUD/*.m Settings/*.m)
 BHTikTok_FRAMEWORKS = UIKit Foundation CoreGraphics Photos CoreServices SystemConfiguration SafariServices Security QuartzCore
 BHTikTok_CFLAGS = -fobjc-arc -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations -Wno-nullability-completeness -Wno-unused-function -Wno-incompatible-pointer-types
 
+# 包含本地化文件
+BHTikTok_INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries
+BHTikTok_RESOURCE_DIRS = zh-Hans.lproj
+
 include $(THEOS_MAKE_PATH)/tweak.mk
+
+# 确保本地化文件被包含在包中
+after-stage::
+	$(ECHO_NOTHING)mkdir -p "$(THEOS_STAGING_DIR)/Library/Application Support/BHTikTok"$(ECHO_END)
+	$(ECHO_NOTHING)cp -r zh-Hans.lproj "$(THEOS_STAGING_DIR)/Library/Application Support/BHTikTok/"$(ECHO_END)

@@ -12,8 +12,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Live Button Actions";
-    self.liveFuncTitles = @[@"Default", @"BHTikTok++ Settings", @"Playback Speed"];
+    self.title = NSLocalizedString(@"Live Button Actions", nil);
+    self.liveFuncTitles = @[NSLocalizedString(@"Default", nil), NSLocalizedString(@"BHTikTok++ Settings", nil), NSLocalizedString(@"Playback Speed", nil)];
     self.liveFuncValues = @[@0, @1, @2];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableView.delegate = self;
@@ -57,9 +57,9 @@
     [defaults setValue:self.liveFuncValues[indexPath.row] forKey:@"live_action"];
     [defaults synchronize];
     
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Live Option Selected" message:[NSString stringWithFormat:@"You selected: %@", self.liveFuncTitles[indexPath.row]]
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Live Option Selected", nil) message:[NSString stringWithFormat:NSLocalizedString(@"You selected: %@", nil), self.liveFuncTitles[indexPath.row]]
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:okAction];
     [self presentViewController:alert animated:YES completion:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"RegionSelectedNotification"

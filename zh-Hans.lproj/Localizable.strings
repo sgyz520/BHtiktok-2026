@@ -1,0 +1,116 @@
+/* BHTikTok++ Settings Localization */
+
+// Section Headers
+"Feed" = "信息流";
+"Profile" = "个人资料";
+"Confirm" = "确认操作";
+"Other" = "其他设置";
+"Region" = "区域设置";
+"Live Button Function" = "直播按钮功能";
+"Playback Speed" = "播放速度";
+"Developer" = "开发者";
+
+// Feed Section
+"Hide Ads" = "隐藏广告";
+"Hide all ads from the app" = "隐藏应用中的所有广告";
+"Download Button" = "下载按钮";
+"Enable download button for videos" = "启用视频下载按钮";
+"Share Sheet" = "分享菜单";
+"Enable sharing options in share sheet" = "启用分享菜单中的分享选项";
+"Remove Watermark" = "移除水印";
+"Remove the TikTok watermark from videos" = "移除视频中的TikTok水印";
+"Show/Hide UI Button" = "显示/隐藏UI按钮";
+"Show or hide the UI button" = "显示或隐藏UI按钮";
+"Stop Playback" = "停止播放";
+"Stop video playback automatically" = "自动停止视频播放";
+"Auto Play Next Video" = "自动播放下一个视频";
+"Automatically play the next video" = "自动播放下一个视频";
+"Show Progress Bar" = "显示进度条";
+"Display progress bar on video playback" = "在视频播放时显示进度条";
+"Transparent Comments" = "透明评论";
+"Make comments transparent" = "使评论透明";
+"Show Usernames" = "显示用户名";
+"Display usernames on videos" = "在视频上显示用户名";
+"Disable Sensitive Content" = "禁用敏感内容";
+"Disable sensitive content filter" = "禁用敏感内容过滤器";
+"Disable Warnings" = "禁用警告";
+"Disable TikTok warnings" = "禁用TikTok警告";
+"Disable Live Streaming" = "禁用直播";
+"Disable live video streaming" = "禁用视频直播功能";
+"Skip Recommendations" = "跳过推荐";
+"Skip recommended videos" = "跳过推荐的视频";
+"Upload Region" = "上传地区";
+"Show Upload Region Flag Next to Username" = "在用户名旁边显示上传地区旗帜";
+
+// Profile Section
+"Profile Save" = "保存资料";
+"Save profile details to clipboard" = "将个人资料保存到剪贴板";
+"Profile Copy" = "复制资料";
+"Copy profile information" = "复制个人资料信息";
+"Video Like Count" = "视频点赞数";
+"Show the number of likes on videos" = "显示视频的点赞数量";
+"Video Upload Date" = "视频上传日期";
+"Show the date videos were uploaded" = "显示视频上传的日期";
+
+// Confirm Section
+"Like Confirmation" = "点赞确认";
+"Confirm before liking a video" = "点赞视频前进行确认";
+"Like Comment Confirmation" = "点赞评论确认";
+"Confirm before liking a comment" = "点赞评论前进行确认";
+"Dislike Comment Confirmation" = "点踩评论确认";
+"Confirm before disliking a comment" = "点踩评论前进行确认";
+"Follow Confirmation" = "关注确认";
+"Confirm before following a user" = "关注用户前进行确认";
+
+// Other Section
+"Always Open Safari" = "始终使用Safari";
+"Always open links in Safari" = "始终在Safari中打开链接";
+"Enable Fake Changes" = "启用虚假修改";
+"Enable fake profile changes" = "启用虚假个人资料修改";
+"Follower:" = "粉丝:";
+"Enter follower count" = "输入粉丝数量";
+"Following:" = "关注:";
+"Enter following count" = "输入关注数量";
+"Fake Verified" = "虚假认证";
+"Make your account appear verified" = "使您的账户看起来已认证";
+"Extended Bio" = "扩展简介";
+"Extend bio section of your profile" = "扩展您个人资料的简介部分";
+"Extended Comments" = "扩展评论";
+"Extend the length of your comments" = "扩展您评论的长度";
+"Upload HD" = "高清上传";
+"Upload videos in HD quality" = "以高清质量上传视频";
+"App Lock" = "应用锁";
+"Lock the app with a passcode" = "使用密码锁定应用";
+"Enable Flex" = "启用Flex";
+"Developers Only, DON'T touch it if you don't know what you are doing." = "仅供开发者使用，如果您不知道自己在做什么，请不要触摸。";
+
+// Region Section
+"Enable Region Changing" = "启用区域更改";
+"Enable region changing functionality" = "启用区域更改功能";
+"Regions" = "地区";
+
+// Live Button Function Section
+"Live Button Action" = "直播按钮操作";
+"Change The Default Live Button Action" = "更改默认的直播按钮操作";
+"Actions" = "操作";
+"Default" = "默认";
+"BHTikTok++ Settings" = "BHTikTok++ 设置";
+"Playback Speed" = "播放速度";
+
+// Playback Speed Section
+"Playback Speed" = "播放速度";
+"Enable Presistent Playback Speed." = "启用持久播放速度。";
+"Speeds" = "速度";
+"Select Speed" = "选择速度";
+"Live Option Selected" = "直播选项已选择";
+"You selected: %@" = "您选择了: %@";
+
+// Developer Section
+"Github Page" = "Github页面";
+"X Page" = "X页面";
+"Buy Me A Coffee" = "请我喝杯咖啡";
+"To keep me Motivated and the Tweak Updated." = "保持我的动力和Tweak的更新。";
+
+// Country Table
+"Live Button Actions" = "直播按钮操作";
+"OK" = "确定";
