@@ -53,22 +53,22 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return NSLocalizedString(@"Feed", nil);
+            return BHTikTokLocalizedString(@"Feed", nil);
         case 1:
-            return NSLocalizedString(@"Profile", nil);
+            return BHTikTokLocalizedString(@"Profile", nil);
         case 2:
-            return NSLocalizedString(@"Confirm", nil);
+            return BHTikTokLocalizedString(@"Confirm", nil);
         case 3:
-            return NSLocalizedString(@"Other", nil);
+            return BHTikTokLocalizedString(@"Other", nil);
         case 4:
-            return NSLocalizedString(@"Region", nil);
+            return BHTikTokLocalizedString(@"Region", nil);
             break;
         case 5:
-            return NSLocalizedString(@"Live Button Function", nil);
+            return BHTikTokLocalizedString(@"Live Button Function", nil);
         case 6:
-            return NSLocalizedString(@"Playback Speed", nil);
+            return BHTikTokLocalizedString(@"Playback Speed", nil);
         case 7:
-            return NSLocalizedString(@"Developer", nil);
+            return BHTikTokLocalizedString(@"Developer", nil);
         default:
             break;
     }
@@ -102,64 +102,64 @@
     if (indexPath.section == 0) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Hide Ads", nil)
-                                                Detail:NSLocalizedString(@"Hide all ads from the app", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Hide Ads", nil)
+                                                Detail:BHTikTokLocalizedString(@"Hide all ads from the app", nil)
                                                    Key:@"hide_ads"];
             case 1:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Download Button", nil)
-                                                Detail:NSLocalizedString(@"Enable download button for videos", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Download Button", nil)
+                                                Detail:BHTikTokLocalizedString(@"Enable download button for videos", nil)
                                                    Key:@"download_button"];
             case 2:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Share Sheet", nil)
-                                                Detail:NSLocalizedString(@"Enable sharing options in share sheet", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Share Sheet", nil)
+                                                Detail:BHTikTokLocalizedString(@"Enable sharing options in share sheet", nil)
                                                    Key:@"share_sheet"];
             case 3:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Remove Watermark", nil)
-                                                Detail:NSLocalizedString(@"Remove the TikTok watermark from videos", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Remove Watermark", nil)
+                                                Detail:BHTikTokLocalizedString(@"Remove the TikTok watermark from videos", nil)
                                                    Key:@"remove_watermark"];
             case 4:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Show/Hide UI Button", nil)
-                                                Detail:NSLocalizedString(@"Show or hide the UI button", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Show/Hide UI Button", nil)
+                                                Detail:BHTikTokLocalizedString(@"Show or hide the UI button", nil)
                                                    Key:@"remove_elements_button"];
             case 5:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Stop Playback", nil)
-                                                Detail:NSLocalizedString(@"Stop video playback automatically", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Stop Playback", nil)
+                                                Detail:BHTikTokLocalizedString(@"Stop video playback automatically", nil)
                                                    Key:@"stop_play"];
             case 6:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Auto Play Next Video", nil)
-                                                Detail:NSLocalizedString(@"Automatically play the next video", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Auto Play Next Video", nil)
+                                                Detail:BHTikTokLocalizedString(@"Automatically play the next video", nil)
                                                    Key:@"auto_play"];
             case 7:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Show Progress Bar", nil)
-                                                Detail:NSLocalizedString(@"Display progress bar on video playback", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Show Progress Bar", nil)
+                                                Detail:BHTikTokLocalizedString(@"Display progress bar on video playback", nil)
                                                    Key:@"show_porgress_bar"];
             case 8:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Transparent Comments", nil)
-                                                Detail:NSLocalizedString(@"Make comments transparent", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Transparent Comments", nil)
+                                                Detail:BHTikTokLocalizedString(@"Make comments transparent", nil)
                                                    Key:@"transparent_commnet"];
             case 9:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Show Usernames", nil)
-                                                Detail:NSLocalizedString(@"Display usernames on videos", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Show Usernames", nil)
+                                                Detail:BHTikTokLocalizedString(@"Display usernames on videos", nil)
                                                    Key:@"show_username"];
             case 10:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Disable Sensitive Content", nil)
-                                                Detail:NSLocalizedString(@"Disable sensitive content filter", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Disable Sensitive Content", nil)
+                                                Detail:BHTikTokLocalizedString(@"Disable sensitive content filter", nil)
                                                    Key:@"disable_unsensitive"];
             case 11:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Disable Warnings", nil)
-                                                Detail:NSLocalizedString(@"Disable TikTok warnings", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Disable Warnings", nil)
+                                                Detail:BHTikTokLocalizedString(@"Disable TikTok warnings", nil)
                                                    Key:@"disable_warnings"];
             case 12:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Disable Live Streaming", nil)
-                                                Detail:NSLocalizedString(@"Disable live video streaming", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Disable Live Streaming", nil)
+                                                Detail:BHTikTokLocalizedString(@"Disable live video streaming", nil)
                                                    Key:@"disable_live"];
             case 13:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Skip Recommendations", nil)
-                                                Detail:NSLocalizedString(@"Skip recommended videos", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Skip Recommendations", nil)
+                                                Detail:BHTikTokLocalizedString(@"Skip recommended videos", nil)
                                                    Key:@"skip_recommnedations"];
             case 14:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Upload Region", nil)
-                                                Detail:NSLocalizedString(@"Show Upload Region Flag Next to Username", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Upload Region", nil)
+                                                Detail:BHTikTokLocalizedString(@"Show Upload Region Flag Next to Username", nil)
                                                    Key:@"upload_region"];
             default:
                 break;
@@ -167,20 +167,20 @@
     } else if (indexPath.section == 1) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Profile Save", nil)
-                                                Detail:NSLocalizedString(@"Save profile details to clipboard", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Profile Save", nil)
+                                                Detail:BHTikTokLocalizedString(@"Save profile details to clipboard", nil)
                                                    Key:@"save_profile"];
             case 1:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Profile Copy", nil)
-                                                Detail:NSLocalizedString(@"Copy profile information", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Profile Copy", nil)
+                                                Detail:BHTikTokLocalizedString(@"Copy profile information", nil)
                                                    Key:@"copy_profile_information"];
             case 2:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Video Like Count", nil)
-                                                Detail:NSLocalizedString(@"Show the number of likes on videos", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Video Like Count", nil)
+                                                Detail:BHTikTokLocalizedString(@"Show the number of likes on videos", nil)
                                                    Key:@"video_like_count"];
             case 3:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Video Upload Date", nil)
-                                                Detail:NSLocalizedString(@"Show the date videos were uploaded", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Video Upload Date", nil)
+                                                Detail:BHTikTokLocalizedString(@"Show the date videos were uploaded", nil)
                                                    Key:@"video_upload_date"];
             default:
                 break;
@@ -188,20 +188,20 @@
     } else if (indexPath.section == 2) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Like Confirmation", nil)
-                                                Detail:NSLocalizedString(@"Confirm before liking a video", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Like Confirmation", nil)
+                                                Detail:BHTikTokLocalizedString(@"Confirm before liking a video", nil)
                                                    Key:@"like_confirm"];
             case 1:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Like Comment Confirmation", nil)
-                                                Detail:NSLocalizedString(@"Confirm before liking a comment", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Like Comment Confirmation", nil)
+                                                Detail:BHTikTokLocalizedString(@"Confirm before liking a comment", nil)
                                                    Key:@"like_comment_confirm"];
             case 2:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Dislike Comment Confirmation", nil)
-                                                Detail:NSLocalizedString(@"Confirm before disliking a comment", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Dislike Comment Confirmation", nil)
+                                                Detail:BHTikTokLocalizedString(@"Confirm before disliking a comment", nil)
                                                    Key:@"dislike_comment_confirm"];
             case 3:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Follow Confirmation", nil)
-                                                Detail:NSLocalizedString(@"Confirm before following a user", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Follow Confirmation", nil)
+                                                Detail:BHTikTokLocalizedString(@"Confirm before following a user", nil)
                                                    Key:@"follow_confirm"];
             default:
                 break;
@@ -209,24 +209,24 @@
     } else if (indexPath.section == 3) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Always Open Safari", nil)
-                                                Detail:NSLocalizedString(@"Always open links in Safari", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Always Open Safari", nil)
+                                                Detail:BHTikTokLocalizedString(@"Always open links in Safari", nil)
                                                    Key:@"openInBrowser"];
             case 1:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Enable Fake Changes", nil)
-                                                Detail:NSLocalizedString(@"Enable fake profile changes", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Enable Fake Changes", nil)
+                                                Detail:BHTikTokLocalizedString(@"Enable fake profile changes", nil)
                                                    Key:@"en_fake"];
             case 2: {
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                 
                 UILabel *followerLabel = [[UILabel alloc] init];
-                followerLabel.text = NSLocalizedString(@"Follower:", nil);
+                followerLabel.text = BHTikTokLocalizedString(@"Follower:", nil);
                 followerLabel.font = [UIFont systemFontOfSize:16];
                 followerLabel.translatesAutoresizingMaskIntoConstraints = NO;
                 [cell.contentView addSubview:followerLabel];
                 
                 UITextField *textField = [[UITextField alloc] init];
-                textField.placeholder = NSLocalizedString(@"Enter follower count", nil);
+                textField.placeholder = BHTikTokLocalizedString(@"Enter follower count", nil);
                 textField.borderStyle = UITextBorderStyleRoundedRect;
                 textField.delegate = self;
                 textField.tag = 2;
@@ -256,13 +256,13 @@
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
                 
                 UILabel *followingLabel = [[UILabel alloc] init];
-                followingLabel.text = NSLocalizedString(@"Following:", nil);
+                followingLabel.text = BHTikTokLocalizedString(@"Following:", nil);
                 followingLabel.font = [UIFont systemFontOfSize:16];
                 followingLabel.translatesAutoresizingMaskIntoConstraints = NO;
                 [cell.contentView addSubview:followingLabel];
                 
                 UITextField *textField = [[UITextField alloc] init];
-                textField.placeholder = NSLocalizedString(@"Enter following count", nil);
+                textField.placeholder = BHTikTokLocalizedString(@"Enter following count", nil);
                 textField.borderStyle = UITextBorderStyleRoundedRect;
                 textField.delegate = self;
                 textField.tag = 1;
@@ -290,28 +290,28 @@
                 return cell;
             }
             case 4:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Fake Verified", nil)
-                                                Detail:NSLocalizedString(@"Make your account appear verified", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Fake Verified", nil)
+                                                Detail:BHTikTokLocalizedString(@"Make your account appear verified", nil)
                                                    Key:@"fake_verify"];
             case 5:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Extended Bio", nil)
-                                                Detail:NSLocalizedString(@"Extend bio section of your profile", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Extended Bio", nil)
+                                                Detail:BHTikTokLocalizedString(@"Extend bio section of your profile", nil)
                                                    Key:@"extended_bio"];
             case 6:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Extended Comments", nil)
-                                                Detail:NSLocalizedString(@"Extend the length of your comments", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Extended Comments", nil)
+                                                Detail:BHTikTokLocalizedString(@"Extend the length of your comments", nil)
                                                    Key:@"extendedComment"];
             case 7:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Upload HD", nil)
-                                                Detail:NSLocalizedString(@"Upload videos in HD quality", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Upload HD", nil)
+                                                Detail:BHTikTokLocalizedString(@"Upload videos in HD quality", nil)
                                                    Key:@"upload_hd"];
             case 8:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"App Lock", nil)
-                                                Detail:NSLocalizedString(@"Lock the app with a passcode", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"App Lock", nil)
+                                                Detail:BHTikTokLocalizedString(@"Lock the app with a passcode", nil)
                                                    Key:@"padlock"];
             case 9:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Enable Flex", nil)
-                                                Detail:NSLocalizedString(@"Developers Only, DON'T touch it if you don't know what you are doing.", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Enable Flex", nil)
+                                                Detail:BHTikTokLocalizedString(@"Developers Only, DON'T touch it if you don't know what you are doing.", nil)
                                                    Key:@"flex_enebaled"];
             default:
                 break;
@@ -319,13 +319,13 @@
     } else if (indexPath.section == 4) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Enable Region Changing", nil)
-                                                Detail:NSLocalizedString(@"Enable region changing functionality", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Enable Region Changing", nil)
+                                                Detail:BHTikTokLocalizedString(@"Enable region changing functionality", nil)
                                                    Key:@"en_region"];
             case 1: {
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 UITableViewCell *regions = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                regions.textLabel.text = NSLocalizedString(@"Regions", nil);
+                regions.textLabel.text = BHTikTokLocalizedString(@"Regions", nil);
                 NSDictionary *selectedRegion = [defaults dictionaryForKey:@"region"];
                 regions.detailTextLabel.text = [NSString stringWithFormat:@"%@", selectedRegion[@"area"]];
                 return regions;
@@ -336,13 +336,13 @@
     } else if (indexPath.section == 5) {
         switch (indexPath.row) {
             case 0:
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Live Button Action", nil)
-                                                Detail:NSLocalizedString(@"Change The Default Live Button Action", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Live Button Action", nil)
+                                                Detail:BHTikTokLocalizedString(@"Change The Default Live Button Action", nil)
                                                    Key:@"en_livefunc"];
             case 1: {
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 UITableViewCell *liveAction = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                liveAction.textLabel.text = NSLocalizedString(@"Actions", nil);
+                liveAction.textLabel.text = BHTikTokLocalizedString(@"Actions", nil);
                 NSString *selectedLiveAction = [defaults valueForKey:@"live_action"];
                 NSArray *liveFuncTitles = @[BHTikTokLocalizedString(@"Default", nil), BHTikTokLocalizedString(@"BHTikTok++ Settings", nil), BHTikTokLocalizedString(@"Playback Speed", nil)];
                 if (selectedLiveAction != nil) {
@@ -358,13 +358,13 @@
     } else if (indexPath.section == 6) {
         switch (indexPath.row) {
             case 0: {
-                return [self createSwitchCellWithTitle:NSLocalizedString(@"Playback Speed", nil)
-                                                Detail:NSLocalizedString(@"Enable Presistent Playback Speed.", nil)
+                return [self createSwitchCellWithTitle:BHTikTokLocalizedString(@"Playback Speed", nil)
+                                                Detail:BHTikTokLocalizedString(@"Enable Presistent Playback Speed.", nil)
                                                    Key:@"playback_en"];
             }
             case 1: {
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                cell.textLabel.text = NSLocalizedString(@"Speeds", nil);
+                cell.textLabel.text = BHTikTokLocalizedString(@"Speeds", nil);
                 
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 NSString *selectedSpeed = [defaults valueForKey:@"playback_speed"];
@@ -379,27 +379,27 @@
         switch (indexPath.row) {
             case 0: {
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                cell.textLabel.text = NSLocalizedString(@"Raul Saeed", nil);
+                cell.textLabel.text = BHTikTokLocalizedString(@"Raul Saeed", nil);
                 cell.textLabel.textColor = [UIColor systemBlueColor];
-                cell.detailTextLabel.text = NSLocalizedString(@"Github Page", nil);
+                cell.detailTextLabel.text = BHTikTokLocalizedString(@"Github Page", nil);
                 cell.imageView.image = [UIImage systemImageNamed:@"link"];
                 cell.detailTextLabel.textColor = [UIColor systemGrayColor];
                 return cell;
             }
             case 1: {
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                cell.textLabel.text = NSLocalizedString(@"Raul Saeed", nil);
+                cell.textLabel.text = BHTikTokLocalizedString(@"Raul Saeed", nil);
                 cell.textLabel.textColor = [UIColor systemBlueColor];
-                cell.detailTextLabel.text = NSLocalizedString(@"X Page", nil);
+                cell.detailTextLabel.text = BHTikTokLocalizedString(@"X Page", nil);
                 cell.imageView.image = [UIImage systemImageNamed:@"link"];
                 cell.detailTextLabel.textColor = [UIColor systemGrayColor];
                 return cell;
             }
             case 2: {
                 UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-                cell.textLabel.text = NSLocalizedString(@"Buy Me A Coffee", nil);
+                cell.textLabel.text = BHTikTokLocalizedString(@"Buy Me A Coffee", nil);
                 cell.textLabel.textColor = [UIColor systemBlueColor];
-                cell.detailTextLabel.text = NSLocalizedString(@"To keep me Motivated and the Tweak Updated.", nil);
+                cell.detailTextLabel.text = BHTikTokLocalizedString(@"To keep me Motivated and the Tweak Updated.", nil);
                 cell.imageView.tintColor = [UIColor orangeColor];
                 cell.detailTextLabel.textColor = [UIColor systemGrayColor];
                 cell.imageView.image = [UIImage systemImageNamed:@"mug.fill"];
