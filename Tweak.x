@@ -999,6 +999,14 @@ static BOOL isAuthenticationShowed = FALSE;
 }
 %end
 %hook AWEPlayVideoPlayerController
+// 前置声明我们添加的新方法
+@interface AWEPlayVideoPlayerController ()
+- (void)stopTimeUpdateTimer;
+- (double)currentPlaybackTime;
+- (void)startTimeUpdateTimer;
+- (void)updateTimeLabels;
+@end
+
 - (void)containerDidFullyDisplayWithReason:(NSInteger)arg1 {
     if ([[[self container] parentViewController] isKindOfClass:%c(AWENewFeedTableViewController)] && [BHIManager skipRecommendations]) {
         AWENewFeedTableViewController *rootVC = [[self container] parentViewController];
