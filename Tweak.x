@@ -701,7 +701,13 @@ static BOOL isAuthenticationShowed = FALSE;
     return [BHIManager progressBar] || %orig;
 }
 - (BOOL)progressBarVisible {
-    return [BHIManager progressBar] || %orig;
+    BOOL shouldShow = [BHIManager progressBar] || %orig;
+    if (shouldShow) {
+        // 显示当前播放时间和总时长
+        // 注意：这里需要找到正确的位置来添加时间标签
+        // 由于无法直接获取当前播放时间，我们将在后续步骤中实现
+    }
+    return shouldShow;
 }
 - (void)live_callInitWithDictyCategoryMethod:(id)arg1 {
     if (![BHIManager disableLive]) {
@@ -1004,6 +1010,87 @@ static BOOL isAuthenticationShowed = FALSE;
         %orig;
     }
 }
+
+// 尝试获取当前播放时间
+%new - (double)currentPlaybackTime {
+    // 尝试使用KVC获取当前播放时间
+    NSNumber *currentTime = [self valueForKeyPath:@"player.currentTime"];
+    if (currentTime) {
+        return [currentTime doubleValue];
+    }
+    
+    // 尝试其他可能的键路径
+    currentTime = [self valueForKeyPath:@"videoPlayer.currentTime"];
+    if (currentTime) {
+        return [currentTime doubleValue];
+    }
+    
+    currentTime = [self valueForKeyPath:@"avPlayer.currentTime"];
+    if (currentTime) {
+        return [currentTime doubleValue];
+    }
+    
+    return 0.0;
+}
+
+// 定期更新时间标签
+%new - (void)startTimeUpdateTimer {
+    // 移除旧的定时器
+    [self stopTimeUpdateTimer];
+    
+    // 创建新的定时器，每秒更新一次
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimeLabels) userInfo:nil repeats:YES];
+    [self setValue:timer forKey:@"timeUpdateTimer"];
+}
+
+%new - (void)stopTimeUpdateTimer {
+    NSTimer *timer = [self valueForKey:@"timeUpdateTimer"];
+    if (timer) {
+        [timer invalidate];
+        [self setValue:nil forKey:@"timeUpdateTimer"];
+    }
+}
+
+%new - (void)updateTimeLabels {
+    if (self.container && [self.container isKindOfClass:%c(AWEAwemeBaseViewController)]) {
+        AWEAwemeBaseViewController *viewController = (AWEAwemeBaseViewController *)self.container;
+        if (viewController.view && [viewController.view isKindOfClass:%c(UITableView)]) {
+            UITableView *tableView = (UITableView *)viewController.view;
+            // 获取当前可见的单元格
+            NSArray *visibleCells = [tableView visibleCells];
+            for (UITableViewCell *cell in visibleCells) {
+                if ([cell isKindOfClass:%c(AWEFeedViewTemplateCell)]) {
+                    AWEFeedViewTemplateCell *templateCell = (AWEFeedViewTemplateCell *)cell;
+                    if (templateCell.currentTimeLabel && templateCell.totalDurationLabel) {
+                        // 更新当前时间标签
+                        double currentTime = [self currentPlaybackTime];
+                        NSInteger minutes = currentTime / 60;
+                        NSInteger seconds = (NSInteger)currentTime % 60;
+                        templateCell.currentTimeLabel.text = [NSString stringWithFormat:@"%ld:%02ld", (long)minutes, (long)seconds];
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 在视频开始播放时启动定时器
+- (void)play {
+    %orig;
+    [self startTimeUpdateTimer];
+}
+
+// 在视频暂停或停止时停止定时器
+- (void)pause {
+    %orig;
+    [self stopTimeUpdateTimer];
+}
+
+- (void)stop {
+    %orig;
+    [self stopTimeUpdateTimer];
+}
+
 %end
 %hook AWEProfileEditTextViewController
 - (NSInteger)maxTextLength {
@@ -1327,6 +1414,8 @@ static BOOL isAuthenticationShowed = FALSE;
 %property(nonatomic, assign) BOOL elementsHidden;
 %property (nonatomic, retain) NSString *fileextension;
 %property (nonatomic, retain) UIProgressView *progressView;
+%property (nonatomic, retain) UILabel *currentTimeLabel;
+%property (nonatomic, retain) UILabel *totalDurationLabel;
 - (void)configWithModel:(id)model {
     %orig;
     // 应用全局隐藏状态
@@ -1350,6 +1439,70 @@ static BOOL isAuthenticationShowed = FALSE;
                     }
                 }
             });
+        }
+    }
+    
+    // 初始化时间标签
+    if ([BHIManager progressBar]) {
+        // 如果已经存在时间标签，先移除
+        [self.currentTimeLabel removeFromSuperview];
+        [self.totalDurationLabel removeFromSuperview];
+        
+        // 创建当前时间标签
+        self.currentTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, 20)];
+        self.currentTimeLabel.textColor = [UIColor whiteColor];
+        self.currentTimeLabel.font = [UIFont systemFontOfSize:12];
+        self.currentTimeLabel.textAlignment = NSTextAlignmentLeft;
+        self.currentTimeLabel.text = @"0:00";
+        [self.contentView addSubview:self.currentTimeLabel];
+        
+        // 创建总时长标签
+        self.totalDurationLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, 20)];
+        self.totalDurationLabel.textColor = [UIColor whiteColor];
+        self.totalDurationLabel.font = [UIFont systemFontOfSize:12];
+        self.totalDurationLabel.textAlignment = NSTextAlignmentRight;
+        
+        // 从模型中获取总时长
+        if ([model respondsToSelector:@selector(video)]) {
+            id video = [model video];
+            if ([video respondsToSelector:@selector(duration)]) {
+                NSNumber *duration = [video duration];
+                if (duration) {
+                    NSTimeInterval totalSeconds = [duration doubleValue];
+                    NSInteger minutes = totalSeconds / 60;
+                    NSInteger seconds = (NSInteger)totalSeconds % 60;
+                    self.totalDurationLabel.text = [NSString stringWithFormat:@"%ld:%02ld", (long)minutes, (long)seconds];
+                }
+            }
+        }
+        
+        [self.contentView addSubview:self.totalDurationLabel];
+        
+        // 设置约束，将时间标签放在进度条附近
+        // 注意：这里的约束位置可能需要根据实际UI进行调整
+        [self.currentTimeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self.totalDurationLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+        
+        // 找到进度条
+        UIView *progressBar = [self.contentView viewWithTag:1000]; // 假设进度条的tag是1000，需要根据实际情况调整
+        if (progressBar) {
+            // 将时间标签放在进度条下方
+            [NSLayoutConstraint activateConstraints:@[
+                [self.currentTimeLabel.leadingAnchor constraintEqualToAnchor:progressBar.leadingAnchor],
+                [self.currentTimeLabel.topAnchor constraintEqualToAnchor:progressBar.bottomAnchor constant:5],
+                
+                [self.totalDurationLabel.trailingAnchor constraintEqualToAnchor:progressBar.trailingAnchor],
+                [self.totalDurationLabel.topAnchor constraintEqualToAnchor:progressBar.bottomAnchor constant:5]
+            ]];
+        } else {
+            // 如果找不到进度条，将时间标签放在视频底部
+            [NSLayoutConstraint activateConstraints:@[
+                [self.currentTimeLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:20],
+                [self.currentTimeLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-20],
+                
+                [self.totalDurationLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-20],
+                [self.totalDurationLabel.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-20]
+            ]];
         }
     }
 }
