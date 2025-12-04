@@ -780,13 +780,25 @@ static BOOL isAuthenticationShowed = FALSE;
 %hook AWEPlayVideoPlayerController // auto play next video and stop looping video
 - (void)playerWillLoopPlaying:(id)arg1 {
     if ([BHIManager autoPlay]) {
-        if ([self.container.parentViewController isKindOfClass:%c(AWENewFeedTableViewController)]) {
-            [((AWENewFeedTableViewController *)self.container.parentViewController) scrollToNextVideo];
-            return;
+        // 尝试直接从容器获取父视图控制器并调用scrollToNextVideo
+        if (self.container) {
+            // 遍历视图控制器层次结构，寻找AWENewFeedTableViewController
+            UIViewController *currentVC = self.container.parentViewController;
+            for (int i = 0; i < 5 && currentVC; i++) {
+                if ([currentVC isKindOfClass:%c(AWENewFeedTableViewController)]) {
+                    // 确保当前视图控制器正在显示
+                    if (currentVC.view.window) {
+                        [currentVC performSelector:@selector(scrollToNextVideo) withObject:nil afterDelay:0.1];
+                        return;
+                    }
+                }
+                currentVC = currentVC.parentViewController;
+            }
         }
     }
     %orig;
 }
+
 - (BOOL)loop {
     if ([BHIManager stopPlay]) {
         return 0;
