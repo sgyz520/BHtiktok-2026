@@ -1,5 +1,6 @@
 #import "TikTokHeaders.h"
 #import "BHTikTokLocalization.h"
+#import <AVFoundation/AVFoundation.h>
 
 static NSArray *jailbreakPaths;
 
@@ -998,6 +999,206 @@ static BOOL isAuthenticationShowed = FALSE;
     return %orig;
 }
 %end
+// 悬浮调试面板类，用于实时显示视频播放信息
+@interface BHDebugFloatPanel : UIView
+@property (nonatomic, strong) UILabel *infoLabel;
+@property (nonatomic, strong) NSTimer *updateTimer;
+@property (nonatomic, weak) UIViewController *targetViewController;
+
++ (instancetype)sharedInstance;
+- (void)showInViewController:(UIViewController *)viewController;
+- (void)hide;
+- (void)updatePlaybackInfo;
+@end
+
+@implementation BHDebugFloatPanel
+
++ (instancetype)sharedInstance {
+    static BHDebugFloatPanel *instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{        
+        instance = [[BHDebugFloatPanel alloc] init];
+        [instance setupUI];
+    });
+    return instance;
+}
+
+- (instancetype)init {
+    self = [super initWithFrame:CGRectMake(50, 100, 200, 80)];
+    if (self) {
+        // 允许用户拖动
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        [self addGestureRecognizer:panGesture];
+    }
+    return self;
+}
+
+- (void)setupUI {
+    self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.7];
+    self.layer.cornerRadius = 8.0;
+    self.layer.masksToBounds = YES;
+    
+    // 创建信息标签
+    self.infoLabel = [[UILabel alloc] initWithFrame:CGRectInset(self.bounds, 10, 10)];
+    self.infoLabel.textColor = [UIColor whiteColor];
+    self.infoLabel.font = [UIFont systemFontOfSize:14];
+    self.infoLabel.numberOfLines = 0;
+    self.infoLabel.text = @"调试信息加载中...";
+    [self addSubview:self.infoLabel];
+}
+
+- (void)showInViewController:(UIViewController *)viewController {
+    if (!viewController) return;
+    
+    // 移除旧的实例
+    [self removeFromSuperview];
+    
+    // 添加到新的视图控制器
+    self.targetViewController = viewController;
+    [viewController.view addSubview:self];
+    [viewController.view bringSubviewToFront:self];
+    
+    // 开始更新计时器
+    [self startUpdateTimer];
+}
+
+- (void)hide {
+    [self stopUpdateTimer];
+    [self removeFromSuperview];
+    self.targetViewController = nil;
+}
+
+- (void)startUpdateTimer {
+    [self stopUpdateTimer];
+    self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updatePlaybackInfo) userInfo:nil repeats:YES];
+}
+
+- (void)stopUpdateTimer {
+    if (self.updateTimer) {
+        [self.updateTimer invalidate];
+        self.updateTimer = nil;
+    }
+}
+
+- (void)handlePan:(UIPanGestureRecognizer *)gesture {
+    CGPoint translation = [gesture translationInView:self.superview];
+    self.center = CGPointMake(self.center.x + translation.x, self.center.y + translation.y);
+    [gesture setTranslation:CGPointZero inView:self.superview];
+    
+    // 确保面板不会超出屏幕边界
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    self.center = CGPointMake(
+        MAX(self.bounds.size.width/2, MIN(screenBounds.size.width - self.bounds.size.width/2, self.center.x)),
+        MAX(self.bounds.size.height/2, MIN(screenBounds.size.height - self.bounds.size.height/2, self.center.y))
+    );
+}
+
+// 时间格式化方法，将秒数转换为 mm:ss 或 HH:mm:ss 格式
+- (NSString *)formatTime:(double)seconds {
+    if (seconds < 0) return @"00:00";
+    
+    NSInteger totalSeconds = (NSInteger)seconds;
+    NSInteger hours = totalSeconds / 3600;
+    NSInteger minutes = (totalSeconds % 3600) / 60;
+    NSInteger secs = totalSeconds % 60;
+    
+    if (hours > 0) {
+        return [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)secs];
+    } else {
+        return [NSString stringWithFormat:@"%02ld:%02ld", (long)minutes, (long)secs];
+    }
+}
+
+// 查找AVPlayer的方法
+- (AVPlayer *)findAVPlayerFromView:(UIView *)view {
+    // 递归查找AVPlayerLayer
+    for (CALayer *layer in view.layer.sublayers) {
+        if ([layer isKindOfClass:[AVPlayerLayer class]]) {
+            AVPlayerLayer *playerLayer = (AVPlayerLayer *)layer;
+            return playerLayer.player;
+        }
+        
+        // 递归查找子视图
+        for (UIView *subview in view.subviews) {
+            AVPlayer *player = [self findAVPlayerFromView:subview];
+            if (player) {
+                return player;
+            }
+        }
+    }
+    return nil;
+}
+
+// 获取视频总时长
+- (double)getVideoDurationFromPlayer:(AVPlayer *)player {
+    if (!player) return 0.0;
+    
+    AVPlayerItem *currentItem = player.currentItem;
+    if (currentItem && currentItem.status == AVPlayerItemStatusReadyToPlay) {
+        CMTime duration = currentItem.duration;
+        if (CMTIME_IS_VALID(duration) && !CMTIME_IS_INDEFINITE(duration)) {
+            return CMTimeGetSeconds(duration);
+        }
+    }
+    return 0.0;
+}
+
+// 获取当前播放时间
+- (double)getCurrentPlaybackTimeFromPlayer:(AVPlayer *)player {
+    if (!player) return 0.0;
+    
+    CMTime currentTime = player.currentTime;
+    if (CMTIME_IS_VALID(currentTime)) {
+        return CMTimeGetSeconds(currentTime);
+    }
+    return 0.0;
+}
+
+- (void)updatePlaybackInfo {
+    if (!self.targetViewController) return;
+    
+    NSMutableString *info = [NSMutableString string];
+    [info appendString:@"=== 视频播放调试信息 ===\n"];
+    
+    // 尝试直接获取AVPlayer
+    AVPlayer *player = nil;
+    
+    // 情况1: 直接从视图控制器中查找player属性
+    player = [self.targetViewController valueForKeyPath:@"player"];
+    if (!player) {
+        player = [self.targetViewController valueForKeyPath:@"avPlayer"];
+    }
+    if (!player) {
+        player = [self.targetViewController valueForKeyPath:@"videoPlayer"];
+    }
+    
+    // 情况2: 通过查找AVPlayerLayer获取Player
+    if (!player) {
+        player = [self findAVPlayerFromView:self.targetViewController.view];
+    }
+    
+    if (player) {
+        [info appendString:@"✅ 找到AVPlayer\n"];
+        
+        double currentTime = [self getCurrentPlaybackTimeFromPlayer:player];
+        double duration = [self getVideoDurationFromPlayer:player];
+        
+        [info appendFormat:@"当前时间: %@\n", [self formatTime:currentTime]];
+        [info appendFormat:@"总时长: %@\n", [self formatTime:duration]];
+        [info appendFormat:@"进度: %.2f%%\n", (duration > 0 ? (currentTime / duration) * 100 : 0)];
+        [info appendFormat:@"播放状态: %@\n", player.rate > 0 ? @"播放中" : @"已暂停"];
+    } else {
+        [info appendString:@"❌ 未找到AVPlayer\n"];
+    }
+    
+    // 添加视图控制器信息
+    [info appendFormat:@"当前VC: %@\n", NSStringFromClass([self.targetViewController class])];
+    
+    self.infoLabel.text = info;
+}
+
+@end
+
 %hook AWEPlayVideoPlayerController
 // 前置声明我们添加的新方法
 @interface AWEPlayVideoPlayerController ()
@@ -1458,8 +1659,7 @@ static BOOL isAuthenticationShowed = FALSE;
         [self addHideElementButton];
         // 如果全局状态是隐藏，则立即应用隐藏效果
         if (self.elementsHidden) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                AWEAwemeBaseViewController *rootVC = self.viewController;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{                AWEAwemeBaseViewController *rootVC = self.viewController;
                 if ([rootVC.interactionController isKindOfClass:%c(TTKFeedInteractionLegacyMainContainerElement)]) {
                     TTKFeedInteractionLegacyMainContainerElement *interactionController = rootVC.interactionController;
                     [interactionController hideAllElements:true exceptArray:nil];
@@ -1471,6 +1671,12 @@ static BOOL isAuthenticationShowed = FALSE;
                 }
             });
         }
+    }
+    
+    // 显示悬浮调试面板
+    AWEAwemeBaseViewController *rootVC = self.viewController;
+    if (rootVC) {
+        [[BHDebugFloatPanel sharedInstance] showInViewController:rootVC];
     }
     
     // 初始化进度条和时间标签
