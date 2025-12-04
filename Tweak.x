@@ -1048,7 +1048,10 @@ static BOOL isAuthenticationShowed = FALSE;
     __block AVPlayer *result = nil;
     
     // 深度优先搜索查找AVPlayer
-    __block void (^dfs)(UIView *) = ^(UIView *view) {
+    __block void (^dfs)(UIView *);
+    __weak typeof(dfs) weakDfs = dfs;
+    
+    dfs = ^(UIView *view) {
         if (result != nil) return;
         
         // 检查当前视图的layer是否是AVPlayerLayer
@@ -1071,7 +1074,10 @@ static BOOL isAuthenticationShowed = FALSE;
         
         // 递归检查子视图
         for (UIView *subview in view.subviews) {
-            dfs(subview);
+            typeof(dfs) strongDfs = weakDfs;
+            if (strongDfs) {
+                strongDfs(subview);
+            }
             if (result != nil) return;
         }
     };
@@ -1154,7 +1160,10 @@ static BOOL isAuthenticationShowed = FALSE;
     __block UIScrollView *result = nil;
     
     // 深度优先搜索查找滚动视图
-    __block void (^dfs)(UIView *) = ^(UIView *view) {
+    __block void (^dfs)(UIView *);
+    __weak typeof(dfs) weakDfs = dfs;
+    
+    dfs = ^(UIView *view) {
         if (result != nil) return;
         
         // 优先查找UICollectionView
@@ -1171,7 +1180,10 @@ static BOOL isAuthenticationShowed = FALSE;
         
         // 递归检查子视图
         for (UIView *subview in view.subviews) {
-            dfs(subview);
+            typeof(dfs) strongDfs = weakDfs;
+            if (strongDfs) {
+                strongDfs(subview);
+            }
         }
     };
     
