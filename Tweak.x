@@ -999,16 +999,204 @@ static BOOL isAuthenticationShowed = FALSE;
     return %orig;
 }
 %end
-// 悬浮调试面板类，用于实时显示视频播放信息
+// MARK: - 时间格式化
+@interface BHTimeFormatter : NSObject
++ (NSString *)format:(double)seconds;
+@end
+
+@implementation BHTimeFormatter
++ (NSString *)format:(double)seconds {
+    if (!isnormal(seconds) || seconds < 0) return @"--:--";
+    NSInteger total = (NSInteger)seconds;
+    NSInteger hours = total / 3600;
+    NSInteger minutes = (total % 3600) / 60;
+    NSInteger secs = total % 60;
+    
+    if (hours > 0) {
+        return [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)secs];
+    } else {
+        return [NSString stringWithFormat:@"%02ld:%02ld", (long)minutes, (long)secs];
+    }
+}
+@end
+
+// MARK: - 播放器时间访问器
+@interface BHVideoTimeAccessor : NSObject
+- (AVPlayer *)findPlayer;
+- (double)getCurrentPlaybackTimeFromPlayer:(AVPlayer *)player;
+- (double)getVideoDurationFromPlayer:(AVPlayer *)player;
+@end
+
+@implementation BHVideoTimeAccessor
+- (AVPlayer *)findPlayer {
+    guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return nil }
+    __block AVPlayer *result = nil;
+    
+    // 深度优先搜索查找AVPlayer
+    void (^dfs)(UIView *) = ^(UIView *view) {
+        if (result != nil) return;
+        
+        // 检查当前视图的layer是否是AVPlayerLayer
+        if ([view.layer isKindOfClass:[AVPlayerLayer class]]) {
+            AVPlayerLayer *playerLayer = (AVPlayerLayer *)view.layer;
+            result = playerLayer.player;
+            return;
+        }
+        
+        // 检查子layer
+        if (view.layer.sublayers) {
+            for (CALayer *layer in view.layer.sublayers) {
+                if ([layer isKindOfClass:[AVPlayerLayer class]]) {
+                    AVPlayerLayer *playerLayer = (AVPlayerLayer *)layer;
+                    result = playerLayer.player;
+                    return;
+                }
+            }
+        }
+        
+        // 递归检查子视图
+        for (UIView *subview in view.subviews) {
+            dfs(subview);
+            if (result != nil) return;
+        }
+    };
+    
+    dfs(window);
+    return result;
+}
+
+- (double)getCurrentPlaybackTimeFromPlayer:(AVPlayer *)player {
+    if (!player) return 0.0;
+    
+    CMTime currentTime = player.currentTime;
+    if (CMTIME_IS_VALID(currentTime)) {
+        return CMTimeGetSeconds(currentTime);
+    }
+    return 0.0;
+}
+
+- (double)getVideoDurationFromPlayer:(AVPlayer *)player {
+    if (!player) return 0.0;
+    
+    AVPlayerItem *currentItem = player.currentItem;
+    if (currentItem && currentItem.status == AVPlayerItemStatusReadyToPlay) {
+        CMTime duration = currentItem.duration;
+        if (CMTIME_IS_VALID(duration) && !CMTIME_IS_INDEFINITE(duration)) {
+            return CMTimeGetSeconds(duration);
+        }
+    }
+    return 0.0;
+}
+@end
+
+// MARK: - 自动滑动控制器
+@interface BHGestureController : NSObject
+@property (nonatomic, strong) BHVideoTimeAccessor *timeAccessor;
+
+- (void)swipeToNextWithCompletion:(void (^)(BOOL))completion;
+- (UIScrollView *)findScrollViewInWindow:(UIWindow *)window;
+- (void)performScroll:(UIScrollView *)scrollView withCompletion:(void (^)(BOOL))completion;
+@end
+
+@implementation BHGestureController
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.timeAccessor = [[BHVideoTimeAccessor alloc] init];
+    }
+    return self;
+}
+
+- (void)swipeToNextWithCompletion:(void (^)(BOOL))completion {
+    dispatch_async(dispatch_get_main_queue(), ^{        
+        // 获取当前key window
+        UIWindow *keyWindow = UIApplication.shared.windows.firstObject;
+        for (UIWindow *window in UIApplication.shared.windows) {
+            if (window.isKeyWindow) {
+                keyWindow = window;
+                break;
+            }
+        }
+        
+        // 查找滚动视图
+        UIScrollView *scrollView = [self findScrollViewInWindow:keyWindow];
+        if (scrollView) {
+            [self performScroll:scrollView withCompletion:completion];
+        } else {
+            if (completion) completion(NO);
+        }
+    });
+}
+
+- (UIScrollView *)findScrollViewInWindow:(UIWindow *)window {
+    if (!window) return nil;
+    
+    __block UIScrollView *result = nil;
+    
+    // 深度优先搜索查找滚动视图
+    void (^dfs)(UIView *) = ^(UIView *view) {
+        if (result != nil) return;
+        
+        // 优先查找UICollectionView
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            result = (UIScrollView *)view;
+            return;
+        }
+        
+        // 查找普通UIScrollView
+        if ([view isKindOfClass:[UIScrollView class]] && ![view isKindOfClass:[UITableView class]]) {
+            result = view;
+            return;
+        }
+        
+        // 递归检查子视图
+        for (UIView *subview in view.subviews) {
+            dfs(subview);
+        }
+    };
+    
+    dfs(window.rootViewController.view);
+    return result;
+}
+
+- (void)performScroll:(UIScrollView *)scrollView withCompletion:(void (^)(BOOL))completion {
+    CGFloat screenHeight = scrollView.bounds.size.height;
+    CGPoint targetOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y + screenHeight);
+    
+    // 执行滑动动画
+    [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{        
+        [scrollView setContentOffset:targetOffset animated:NO];
+    } completion:^(BOOL finished) {        
+        // 添加延迟确保视频加载完成
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{            
+            if (completion) completion(finished);
+        });
+    }];
+}
+
+@end
+
+// MARK: - 悬浮调试面板类，用于实时显示视频播放信息
 @interface BHDebugFloatPanel : UIView
-@property (nonatomic, strong) UILabel *infoLabel;
+@property (nonatomic, strong) UILabel *currentTimeLabel;
+@property (nonatomic, strong) UILabel *durationLabel;
+@property (nonatomic, strong) UILabel *statusLabel;
+@property (nonatomic, strong) UISwitch *autoSwipeSwitch;
 @property (nonatomic, strong) NSTimer *updateTimer;
-@property (nonatomic, weak) UIViewController *targetViewController;
+@property (nonatomic, strong) BHVideoTimeAccessor *timeAccessor;
+@property (nonatomic, strong) BHGestureController *gestureController;
+@property (nonatomic, strong) NSTimer *autoSwipeTimer;
+@property (nonatomic, assign) double autoSwipeThreshold;
+@property (nonatomic, assign) BOOL autoSwipeEnabled;
+@property (nonatomic, strong) NSDate *lastSwipeTime;
 
 + (instancetype)sharedInstance;
-- (void)showInViewController:(UIViewController *)viewController;
+- (void)show;
 - (void)hide;
 - (void)updatePlaybackInfo;
+- (void)startAutoSwipeMonitoring;
+- (void)stopAutoSwipeMonitoring;
 @end
 
 @implementation BHDebugFloatPanel
@@ -1024,8 +1212,18 @@ static BOOL isAuthenticationShowed = FALSE;
 }
 
 - (instancetype)init {
-    self = [super initWithFrame:CGRectMake(50, 100, 200, 80)];
+    self = [super initWithFrame:CGRectMake(50, 100, 180, 60)];
     if (self) {
+        // 初始化默认设置
+        self.autoSwipeThreshold = 0.97; // 播放到97%时自动滑动
+        self.autoSwipeEnabled = NO;
+        
+        // 初始化时间访问器
+        self.timeAccessor = [[BHVideoTimeAccessor alloc] init];
+        
+        // 初始化手势控制器
+        self.gestureController = [[BHGestureController alloc] init];
+        
         // 允许用户拖动
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
         [self addGestureRecognizer:panGesture];
@@ -1034,43 +1232,111 @@ static BOOL isAuthenticationShowed = FALSE;
 }
 
 - (void)setupUI {
-    self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.7];
+    self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.75];
     self.layer.cornerRadius = 8.0;
     self.layer.masksToBounds = YES;
     
-    // 创建信息标签
-    self.infoLabel = [[UILabel alloc] initWithFrame:CGRectInset(self.bounds, 10, 10)];
-    self.infoLabel.textColor = [UIColor whiteColor];
-    self.infoLabel.font = [UIFont systemFontOfSize:14];
-    self.infoLabel.numberOfLines = 0;
-    self.infoLabel.text = @"调试信息加载中...";
-    [self addSubview:self.infoLabel];
+    // 创建自动滑动开关
+    self.autoSwipeSwitch = [[UISwitch alloc] init];
+    self.autoSwipeSwitch.onTintColor = [UIColor systemGreenColor];
+    [self.autoSwipeSwitch addTarget:self action:@selector(autoSwipeSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:self.autoSwipeSwitch];
+    
+    // 创建自动滑动标签
+    UILabel *autoSwipeLabel = [[UILabel alloc] init];
+    autoSwipeLabel.text = @"自动下一条";
+    autoSwipeLabel.textColor = [UIColor whiteColor];
+    autoSwipeLabel.font = [UIFont systemFontOfSize:12];
+    [self addSubview:autoSwipeLabel];
+    
+    // 创建时间标签
+    self.currentTimeLabel = [[UILabel alloc] init];
+    self.currentTimeLabel.textColor = [UIColor whiteColor];
+    self.currentTimeLabel.font = [UIFont monospacedDigitSystemFontOfSize:16 weight:UIFontWeightMedium];
+    self.currentTimeLabel.text = @"00:00";
+    [self addSubview:self.currentTimeLabel];
+    
+    self.durationLabel = [[UILabel alloc] init];
+    self.durationLabel.textColor = [UIColor lightGrayColor];
+    self.durationLabel.font = [UIFont monospacedDigitSystemFontOfSize:16 weight:UIFontWeightMedium];
+    self.durationLabel.text = @"--:--";
+    [self addSubview:self.durationLabel];
+    
+    // 创建播放状态标签
+    self.statusLabel = [[UILabel alloc] init];
+    self.statusLabel.textColor = [UIColor systemGreenColor];
+    self.statusLabel.font = [UIFont systemFontOfSize:12];
+    self.statusLabel.text = @"播放中";
+    [self addSubview:self.statusLabel];
+    
+    // 使用Auto Layout布局
+    autoSwipeLabel.translatesAutoresizingMaskIntoConstraints = false;
+    self.autoSwipeSwitch.translatesAutoresizingMaskIntoConstraints = false;
+    self.currentTimeLabel.translatesAutoresizingMaskIntoConstraints = false;
+    self.durationLabel.translatesAutoresizingMaskIntoConstraints = false;
+    self.statusLabel.translatesAutoresizingMaskIntoConstraints = false;
+    
+    NSLayoutConstraint.activate([
+        // 自动滑动开关和标签
+        autoSwipeLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
+        autoSwipeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 6),
+        
+        self.autoSwipeSwitch.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
+        self.autoSwipeSwitch.centerYAnchor.constraint(equalTo: autoSwipeLabel.centerYAnchor),
+        
+        // 当前时间标签约束
+        self.currentTimeLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
+        self.currentTimeLabel.topAnchor.constraint(equalTo: autoSwipeLabel.bottomAnchor, constant: 2),
+        
+        // 总时长标签约束
+        self.durationLabel.leadingAnchor.constraint(equalTo: self.currentTimeLabel.trailingAnchor, constant: 10),
+        self.durationLabel.centerYAnchor.constraint(equalTo: self.currentTimeLabel.centerYAnchor),
+        
+        // 播放状态标签约束
+        self.statusLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
+        self.statusLabel.centerYAnchor.constraint(equalTo: self.currentTimeLabel.centerYAnchor),
+        self.statusLabel.leadingAnchor.constraint(equalTo: self.durationLabel.trailingAnchor, constant: 10)
+    ]);
 }
 
-- (void)showInViewController:(UIViewController *)viewController {
-    if (!viewController) return;
-    
+- (void)show {
     // 移除旧的实例
     [self removeFromSuperview];
     
-    // 添加到新的视图控制器
-    self.targetViewController = viewController;
-    [viewController.view addSubview:self];
-    [viewController.view bringSubviewToFront:self];
-    
-    // 开始更新计时器
-    [self startUpdateTimer];
+    // 添加到当前key window
+    if (UIApplication.shared.windows.count > 0) {
+        UIWindow *keyWindow = UIApplication.shared.windows.firstObject;
+        for (UIWindow *window in UIApplication.shared.windows) {
+            if (window.isKeyWindow) {
+                keyWindow = window;
+                break;
+            }
+        }
+        [keyWindow addSubview:self];
+        [keyWindow bringSubviewToFront:self];
+        
+        // 开始更新计时器
+        [self startUpdateTimer];
+        
+        // 开始自动滑动监控
+        if (self.autoSwipeEnabled) {
+            [self startAutoSwipeMonitoring];
+        }
+    }
 }
 
 - (void)hide {
     [self stopUpdateTimer];
+    [self stopAutoSwipeMonitoring];
     [self removeFromSuperview];
-    self.targetViewController = nil;
 }
 
 - (void)startUpdateTimer {
     [self stopUpdateTimer];
-    self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updatePlaybackInfo) userInfo:nil repeats:YES];
+    // 提高更新频率，使显示更流畅
+    self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updatePlaybackInfo) userInfo:nil repeats:YES];
+    // 添加到RunLoop，确保在滑动时也能更新
+    [[NSRunLoop mainRunLoop] addTimer:self.updateTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)stopUpdateTimer {
@@ -1093,108 +1359,93 @@ static BOOL isAuthenticationShowed = FALSE;
     );
 }
 
-// 时间格式化方法，将秒数转换为 mm:ss 或 HH:mm:ss 格式
-- (NSString *)formatTime:(double)seconds {
-    if (seconds < 0) return @"00:00";
+- (void)autoSwipeSwitchChanged:(UISwitch *)sender {
+    self.autoSwipeEnabled = sender.isOn;
     
-    NSInteger totalSeconds = (NSInteger)seconds;
-    NSInteger hours = totalSeconds / 3600;
-    NSInteger minutes = (totalSeconds % 3600) / 60;
-    NSInteger secs = totalSeconds % 60;
-    
-    if (hours > 0) {
-        return [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)secs];
+    if (sender.isOn) {
+        [self startAutoSwipeMonitoring];
     } else {
-        return [NSString stringWithFormat:@"%02ld:%02ld", (long)minutes, (long)secs];
+        [self stopAutoSwipeMonitoring];
     }
 }
 
-// 查找AVPlayer的方法
-- (AVPlayer *)findAVPlayerFromView:(UIView *)view {
-    // 递归查找AVPlayerLayer
-    for (CALayer *layer in view.layer.sublayers) {
-        if ([layer isKindOfClass:[AVPlayerLayer class]]) {
-            AVPlayerLayer *playerLayer = (AVPlayerLayer *)layer;
-            return playerLayer.player;
-        }
-        
-        // 递归查找子视图
-        for (UIView *subview in view.subviews) {
-            AVPlayer *player = [self findAVPlayerFromView:subview];
-            if (player) {
-                return player;
-            }
-        }
-    }
-    return nil;
-}
-
-// 获取视频总时长
-- (double)getVideoDurationFromPlayer:(AVPlayer *)player {
-    if (!player) return 0.0;
+- (void)startAutoSwipeMonitoring {
+    [self stopAutoSwipeMonitoring];
     
-    AVPlayerItem *currentItem = player.currentItem;
-    if (currentItem && currentItem.status == AVPlayerItemStatusReadyToPlay) {
-        CMTime duration = currentItem.duration;
-        if (CMTIME_IS_VALID(duration) && !CMTIME_IS_INDEFINITE(duration)) {
-            return CMTimeGetSeconds(duration);
-        }
-    }
-    return 0.0;
+    // 启动自动滑动监控定时器
+    self.autoSwipeTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(checkAutoSwipeCondition) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.autoSwipeTimer forMode:NSRunLoopCommonModes];
 }
 
-// 获取当前播放时间
-- (double)getCurrentPlaybackTimeFromPlayer:(AVPlayer *)player {
-    if (!player) return 0.0;
-    
-    CMTime currentTime = player.currentTime;
-    if (CMTIME_IS_VALID(currentTime)) {
-        return CMTimeGetSeconds(currentTime);
+- (void)stopAutoSwipeMonitoring {
+    if (self.autoSwipeTimer) {
+        [self.autoSwipeTimer invalidate];
+        self.autoSwipeTimer = nil;
     }
-    return 0.0;
+}
+
+- (void)checkAutoSwipeCondition {
+    if (!self.autoSwipeEnabled) {
+        return;
+    }
+    
+    // 防止重复触发
+    if (self.lastSwipeTime) {
+        NSTimeInterval timeSinceLastSwipe = [[NSDate date] timeIntervalSinceDate:self.lastSwipeTime];
+        if (timeSinceLastSwipe < 1.0) {
+            return;
+        }
+    }
+    
+    // 获取播放信息
+    AVPlayer *player = [self.timeAccessor findPlayer];
+    if (!player) {
+        return;
+    }
+    
+    double currentTime = [self.timeAccessor getCurrentPlaybackTimeFromPlayer:player];
+    double duration = [self.timeAccessor getVideoDurationFromPlayer:player];
+    
+    // 检查是否达到自动滑动条件
+    if (duration > 0 && currentTime / duration >= self.autoSwipeThreshold) {
+        [self triggerAutoSwipe];
+    }
+}
+
+- (void)triggerAutoSwipe {
+    self.lastSwipeTime = [NSDate date];
+    
+    // 执行自动滑动
+    [self.gestureController swipeToNextWithCompletion:^(BOOL success) {
+        if (success) {
+            NSLog(@"自动滑动到下一个视频成功");
+        } else {
+            NSLog(@"自动滑动到下一个视频失败");
+        }
+    }];
 }
 
 - (void)updatePlaybackInfo {
-    if (!self.targetViewController) return;
-    
-    NSMutableString *info = [NSMutableString string];
-    [info appendString:@"=== 视频播放调试信息 ===\n"];
-    
-    // 尝试直接获取AVPlayer
-    AVPlayer *player = nil;
-    
-    // 情况1: 直接从视图控制器中查找player属性
-    player = [self.targetViewController valueForKeyPath:@"player"];
-    if (!player) {
-        player = [self.targetViewController valueForKeyPath:@"avPlayer"];
-    }
-    if (!player) {
-        player = [self.targetViewController valueForKeyPath:@"videoPlayer"];
-    }
-    
-    // 情况2: 通过查找AVPlayerLayer获取Player
-    if (!player) {
-        player = [self findAVPlayerFromView:self.targetViewController.view];
-    }
+    // 查找AVPlayer
+    AVPlayer *player = [self.timeAccessor findPlayer];
     
     if (player) {
-        [info appendString:@"✅ 找到AVPlayer\n"];
+        // 获取播放信息
+        double currentTime = [self.timeAccessor getCurrentPlaybackTimeFromPlayer:player];
+        double duration = [self.timeAccessor getVideoDurationFromPlayer:player];
         
-        double currentTime = [self getCurrentPlaybackTimeFromPlayer:player];
-        double duration = [self getVideoDurationFromPlayer:player];
-        
-        [info appendFormat:@"当前时间: %@\n", [self formatTime:currentTime]];
-        [info appendFormat:@"总时长: %@\n", [self formatTime:duration]];
-        [info appendFormat:@"进度: %.2f%%\n", (duration > 0 ? (currentTime / duration) * 100 : 0)];
-        [info appendFormat:@"播放状态: %@\n", player.rate > 0 ? @"播放中" : @"已暂停"];
+        // 更新UI
+        self.currentTimeLabel.text = [BHTimeFormatter format:currentTime];
+        self.durationLabel.text = [BHTimeFormatter format:duration];
+        self.statusLabel.text = (player.rate > 0) ? @"播放中" : @"已暂停";
+        self.statusLabel.textColor = (player.rate > 0) ? [UIColor systemGreenColor] : [UIColor systemRedColor];
     } else {
-        [info appendString:@"❌ 未找到AVPlayer\n"];
+        // 未找到播放器
+        self.currentTimeLabel.text = @"--:--";
+        self.durationLabel.text = @"--:--";
+        self.statusLabel.text = @"未播放";
+        self.statusLabel.textColor = [UIColor lightGrayColor];
     }
-    
-    // 添加视图控制器信息
-    [info appendFormat:@"当前VC: %@\n", NSStringFromClass([self.targetViewController class])];
-    
-    self.infoLabel.text = info;
 }
 
 @end
