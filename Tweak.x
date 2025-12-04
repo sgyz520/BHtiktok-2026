@@ -2014,35 +2014,53 @@ static BOOL isAuthenticationShowed = FALSE;
 
 %hook AWEURLModel
 %new - (NSString *)bestURLtoDownloadFormat {
-    NSURL *bestURLFormat;
+    NSString *bestURLFormat = nil;
     for (NSString *url in self.originURLList) {
         if ([url containsString:@"video_mp4"]) {
             bestURLFormat = @"mp4";
+            break;
         } else if ([url containsString:@".jpeg"]) {
             bestURLFormat = @"jpeg";
+            break;
         } else if ([url containsString:@".png"]) {
             bestURLFormat = @"png";
+            break;
         } else if ([url containsString:@".mp3"]) {
             bestURLFormat = @"mp3";
+            break;
         } else if ([url containsString:@".m4a"]) {
             bestURLFormat = @"m4a";
+            break;
         }
     }
     if (bestURLFormat == nil) {
-        bestURLFormat = @"m4a";
+        bestURLFormat = @"mp4"; // 默认使用mp4格式而不是m4a，因为大部分下载是视频
     }
 
     return bestURLFormat;
 }
 %new - (NSURL *)bestURLtoDownload {
     NSURL *bestURL;
+    // 优先选择高清视频URL
     for (NSString *url in self.originURLList) {
-        if ([url containsString:@"video_mp4"] || [url containsString:@".jpeg"] || [url containsString:@".mp3"]) {
+        if ([url containsString:@"video_mp4"]) {
             bestURL = [NSURL URLWithString:url];
+            break; // 找到第一个视频URL就返回，通常是高清的
+        }
+    }
+    
+    // 如果没有找到视频URL，再查找图片或音频URL
+    if (bestURL == nil) {
+        for (NSString *url in self.originURLList) {
+            if ([url containsString:@".jpeg"] || [url containsString:@".mp3"]) {
+                bestURL = [NSURL URLWithString:url];
+                break;
+            }
         }
     }
 
-    if (bestURL == nil) {
+    // 如果还是没有找到，使用第一个URL
+    if (bestURL == nil && self.originURLList.count > 0) {
         bestURL = [NSURL URLWithString:[self.originURLList firstObject]];
     }
 
