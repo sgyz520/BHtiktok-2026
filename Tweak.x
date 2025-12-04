@@ -800,7 +800,9 @@ static BOOL isAuthenticationShowed = FALSE;
             for (int i = 0; i < 5 && currentVC; i++) {
                 if ([currentVC isKindOfClass:%c(AWENewFeedTableViewController)]) {
                     if (currentVC.view.window) {
-                        [currentVC scrollToNextVideo];
+                        // 将UIViewController转换为AWENewFeedTableViewController类型
+                        AWENewFeedTableViewController *feedVC = (AWENewFeedTableViewController *)currentVC;
+                        [feedVC scrollToNextVideo];
                         return;
                     }
                 }
@@ -822,7 +824,9 @@ static BOOL isAuthenticationShowed = FALSE;
                 // 检查当前视图控制器是否是我们要找的类型
                 if ([currentVC isKindOfClass:%c(AWENewFeedTableViewController)]) {
                     if (currentVC.view.window) {
-                        [currentVC scrollToNextVideo];
+                        // 将UIViewController转换为AWENewFeedTableViewController类型
+                        AWENewFeedTableViewController *feedVC = (AWENewFeedTableViewController *)currentVC;
+                        [feedVC scrollToNextVideo];
                         return;
                     }
                 }
