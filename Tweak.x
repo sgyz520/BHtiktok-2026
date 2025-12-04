@@ -1048,7 +1048,7 @@ static BOOL isAuthenticationShowed = FALSE;
     __block AVPlayer *result = nil;
     
     // 深度优先搜索查找AVPlayer
-    void (^dfs)(UIView *) = ^(UIView *view) {
+    __block void (^dfs)(UIView *) = ^(UIView *view) {
         if (result != nil) return;
         
         // 检查当前视图的layer是否是AVPlayerLayer
@@ -1154,7 +1154,7 @@ static BOOL isAuthenticationShowed = FALSE;
     __block UIScrollView *result = nil;
     
     // 深度优先搜索查找滚动视图
-    void (^dfs)(UIView *) = ^(UIView *view) {
+    __block void (^dfs)(UIView *) = ^(UIView *view) {
         if (result != nil) return;
         
         // 优先查找UICollectionView
@@ -1952,10 +1952,7 @@ static BOOL isAuthenticationShowed = FALSE;
     }
     
     // 显示悬浮调试面板
-    AWEAwemeBaseViewController *rootVC = self.viewController;
-    if (rootVC) {
-        [[BHDebugFloatPanel sharedInstance] showInViewController:rootVC];
-    }
+    [[BHDebugFloatPanel sharedInstance] show];
     
     // 初始化进度条和时间标签
     if ([BHIManager progressBar]) {
